@@ -1,9 +1,10 @@
-const CACHE_NAME = 'dbms-zero-to-infinity-v1';
+const CACHE_NAME = 'dbms-zero-to-infinity-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './favicon.svg',
+  './kapil-hero.jpg',
   './icons.svg'
 ];
 
