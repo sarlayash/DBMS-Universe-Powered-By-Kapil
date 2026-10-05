@@ -1,0 +1,19 @@
+{
+  "name": "DBMS Zero-To-Infinity | Powered By Kapil",
+  "short_name": "DBMS Universe",
+  "description": "From File Systems to Modern Database Engineering — 25% Theory, 75% Hands-On. SarlaYash Mission Productions.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090d16",
+  "theme_color": "#2563eb",
+  "categories": ["education", "developer", "productivity"],
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
