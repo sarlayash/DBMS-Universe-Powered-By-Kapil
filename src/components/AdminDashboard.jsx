@@ -26,30 +26,30 @@ export default function AdminDashboard() {
     ],
     contentAlert: {
       topic: 'BCNF Functional Dependency Preservation',
-      message: 'This topic is causing abnormal learner failure (41.2% drop-off). Suggested action: Introduce interactive dependency arrows visualizer.',
+      message: 'This topic causes abnormal learner friction (41.2% drop-off). Suggested action: Use interactive dependency arrows in Normalization Workbench.',
       severity: 'HIGH'
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Top Banner */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+      <div className="bg-[#1c130e] border border-[#382519] rounded-3xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-amber-400 font-mono text-xs font-bold uppercase mb-1">
-              <Cpu className="w-4 h-4 text-amber-400" />
+            <div className="flex items-center gap-2 text-[#fef08a] font-mono text-xs font-bold uppercase mb-1">
+              <Cpu className="w-4 h-4 text-[#fef08a]" />
               <span>SarlaYash Mission Productions • Admin Intelligence</span>
             </div>
             <h1 className="text-xl md:text-2xl font-bold text-white">
               DBMS Zero-To-Infinity Operational Dashboard
             </h1>
-            <p className="text-zinc-400 text-xs font-mono">
+            <p className="text-[#b8a495] text-xs font-mono">
               Live telemetry tracking learner cohorts, assessment distributions, and certificate verifications.
             </p>
           </div>
           <div className="flex gap-2">
-            <span className="px-3 py-1 bg-black text-amber-300 text-xs font-mono font-bold rounded-lg border border-amber-500/40 shadow-sm">
+            <span className="px-3.5 py-1.5 bg-[#140d09] text-[#fef08a] text-xs font-mono font-bold rounded-xl border border-[#382519] shadow-sm">
               ● System Online (100% Offline Capable)
             </span>
           </div>
@@ -57,13 +57,13 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content Intelligence Alarm */}
-      <div className="bg-red-950/40 border border-red-500/50 rounded-2xl p-4 flex items-start gap-3 text-xs font-mono text-red-200">
+      <div className="bg-[#251810] border border-red-900/60 rounded-3xl p-5 flex items-start gap-3.5 text-xs font-mono text-red-200 shadow-lg">
         <ShieldAlert className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
         <div className="space-y-1">
           <div className="font-bold text-sm text-red-300">
             CONTENT INTELLIGENCE ALERT: {adminStats.contentAlert.topic}
           </div>
-          <p className="text-zinc-300 leading-relaxed">
+          <p className="text-[#f5ece3] leading-relaxed">
             "{adminStats.contentAlert.message}"
           </p>
         </div>
@@ -71,74 +71,74 @@ export default function AdminDashboard() {
 
       {/* Cohort Overview Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-md">
-          <div className="text-zinc-500 text-[11px] font-mono">TOTAL LEARNERS</div>
+        <div className="bg-[#1c130e] border border-[#382519] rounded-2xl p-4 shadow-xl">
+          <div className="text-[#8c786a] text-[11px] font-mono">TOTAL LEARNERS</div>
           <div className="text-2xl font-bold font-mono text-white mt-1">
             {adminStats.totalLearners.toLocaleString()}
           </div>
-          <span className="text-[10px] text-amber-400 font-mono">+14% this month</span>
+          <span className="text-[10px] text-[#fef08a] font-mono">+14% this month</span>
         </div>
 
-        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-md">
-          <div className="text-zinc-500 text-[11px] font-mono">ACTIVE LEARNERS</div>
-          <div className="text-2xl font-bold font-mono text-zinc-100 mt-1">
+        <div className="bg-[#1c130e] border border-[#382519] rounded-2xl p-4 shadow-xl">
+          <div className="text-[#8c786a] text-[11px] font-mono">ACTIVE LEARNERS</div>
+          <div className="text-2xl font-bold font-mono text-white mt-1">
             {adminStats.activeLearners.toLocaleString()}
           </div>
-          <span className="text-[10px] text-zinc-400 font-mono">31% engagement</span>
+          <span className="text-[10px] text-[#b8a495] font-mono">31% engagement</span>
         </div>
 
-        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-md">
-          <div className="text-zinc-500 text-[11px] font-mono">COMPLETION RATE</div>
-          <div className="text-2xl font-bold font-mono text-amber-400 mt-1">
+        <div className="bg-[#1c130e] border border-[#382519] rounded-2xl p-4 shadow-xl">
+          <div className="text-[#8c786a] text-[11px] font-mono">COMPLETION RATE</div>
+          <div className="text-2xl font-bold font-mono text-[#fef08a] mt-1">
             {adminStats.completionRate}%
           </div>
-          <span className="text-[10px] text-amber-300 font-mono">Zero to Infinity pass</span>
+          <span className="text-[10px] text-[#fef08a] font-mono">Zero to Infinity pass</span>
         </div>
 
-        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-md">
-          <div className="text-zinc-500 text-[11px] font-mono">AVG ASSESSMENT</div>
-          <div className="text-2xl font-bold font-mono text-amber-400 mt-1">
+        <div className="bg-[#1c130e] border border-[#382519] rounded-2xl p-4 shadow-xl">
+          <div className="text-[#8c786a] text-[11px] font-mono">AVG ASSESSMENT</div>
+          <div className="text-2xl font-bold font-mono text-[#fef08a] mt-1">
             {adminStats.avgAssessmentScore}%
           </div>
-          <span className="text-[10px] text-zinc-400 font-mono">Across 26 modules</span>
+          <span className="text-[10px] text-[#b8a495] font-mono">Across 26 modules</span>
         </div>
       </div>
 
       {/* Certificates & Difficult Lessons Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
         {/* Certificate Pipeline */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl">
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+        <div className="bg-[#1c130e] border border-[#382519] rounded-3xl p-5 space-y-4 shadow-xl">
+          <div className="flex items-center justify-between border-b border-[#382519] pb-3">
             <span className="font-bold text-white uppercase text-xs">Certificate Registry</span>
-            <Award className="w-4 h-4 text-amber-400" />
+            <Award className="w-4 h-4 text-[#fef08a]" />
           </div>
 
           <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="bg-black p-3 rounded-xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block">ISSUED</span>
+            <div className="bg-[#140d09] p-3 rounded-2xl border border-[#382519]">
+              <span className="text-[#8c786a] text-[10px] block">ISSUED</span>
               <span className="text-lg font-bold text-white">{adminStats.certificatesIssued}</span>
             </div>
-            <div className="bg-black p-3 rounded-xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block">VERIFIED</span>
-              <span className="text-lg font-bold text-amber-300">{adminStats.certificatesVerified}</span>
+            <div className="bg-[#140d09] p-3 rounded-2xl border border-[#382519]">
+              <span className="text-[#8c786a] text-[10px] block">VERIFIED</span>
+              <span className="text-lg font-bold text-[#fef08a]">{adminStats.certificatesVerified}</span>
             </div>
-            <div className="bg-black p-3 rounded-xl border border-zinc-800">
-              <span className="text-zinc-500 text-[10px] block">PENDING</span>
-              <span className="text-lg font-bold text-amber-500">{adminStats.certificatesPending}</span>
+            <div className="bg-[#140d09] p-3 rounded-2xl border border-[#382519]">
+              <span className="text-[#8c786a] text-[10px] block">PENDING</span>
+              <span className="text-lg font-bold text-[#b8a495]">{adminStats.certificatesPending}</span>
             </div>
           </div>
         </div>
 
         {/* Most Difficult Lessons */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 space-y-3 shadow-xl">
-          <span className="font-bold text-white uppercase text-xs block border-b border-zinc-800 pb-2">
-            Highest Friction Lessons (Abnormal Dropoff):
+        <div className="bg-[#1c130e] border border-[#382519] rounded-3xl p-5 space-y-3 shadow-xl">
+          <span className="font-bold text-white uppercase text-xs block border-b border-[#382519] pb-3">
+            Highest Friction Lessons (Drop-Off Points):
           </span>
           <div className="space-y-2">
             {adminStats.difficultLessons.map(l => (
-              <div key={l.id} className="flex justify-between items-center p-2 bg-black rounded-lg border border-zinc-800/80">
-                <span className="text-zinc-300">{l.name}</span>
-                <span className="text-red-400 font-bold bg-red-950/60 px-2 py-0.5 rounded border border-red-900/50">
+              <div key={l.id} className="flex justify-between items-center p-2.5 bg-[#140d09] rounded-2xl border border-[#382519]">
+                <span className="text-[#f5ece3]">{l.name}</span>
+                <span className="text-red-400 font-bold bg-[#251810] px-2 py-0.5 rounded-lg border border-red-900/50">
                   {l.failRate} Fail
                 </span>
               </div>

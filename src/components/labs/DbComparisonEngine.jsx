@@ -128,14 +128,14 @@ export default function DbComparisonEngine() {
   const dbB = DATABASE_PROFILES.find(d => d.name === compareDbs[1]) || DATABASE_PROFILES[4];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-        <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
-          <Scale className="w-5 h-5 text-amber-400" />
+      <div className="bg-[#1c130e] border border-[#382519] rounded-3xl p-6 shadow-xl">
+        <div className="flex items-center gap-2 text-[#fef08a] font-bold text-lg mb-1">
+          <Scale className="w-5 h-5 text-[#fef08a]" />
           <span>Level 16: Database Architecture Comparison Engine</span>
         </div>
-        <p className="text-zinc-300 text-sm">
+        <p className="text-[#f5ece3] text-sm">
           "Learn the concept first. Learn the product second." Compare enterprise database engines to understand
           <strong> when and why</strong> an engineering team chooses PostgreSQL over MongoDB or Cassandra.
         </p>
@@ -149,8 +149,8 @@ export default function DbComparisonEngine() {
                 onClick={() => setSelectedFilter(filter)}
                 className={`px-3.5 py-1.5 text-xs font-mono rounded-xl transition font-bold border ${
                   selectedFilter === filter
-                    ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black border-amber-400 shadow-md shadow-amber-500/20'
-                    : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
+                    ? 'bg-gradient-to-r from-[#fef08a] via-[#fde047] to-[#facc15] text-[#140d09] border-[#fef08a] shadow-md shadow-yellow-400/20'
+                    : 'bg-[#140d09] border-[#382519] text-[#b8a495] hover:text-white'
                 }`}
               >
                 {filter}
@@ -159,38 +159,38 @@ export default function DbComparisonEngine() {
           </div>
 
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-zinc-500" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8c786a]" />
             <input
               type="text"
               placeholder="Search database..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:border-amber-400 outline-none"
+              className="pl-8 pr-3 py-1.5 bg-[#140d09] border border-[#382519] rounded-xl text-xs font-mono text-white focus:border-[#fef08a] outline-none"
             />
           </div>
         </div>
       </div>
 
       {/* Head-to-Head Comparison Selector */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-        <span className="text-xs font-mono uppercase text-zinc-400 font-bold block mb-3">
+      <div className="bg-[#1c130e] border border-[#382519] rounded-3xl p-6 shadow-xl">
+        <span className="text-xs font-mono uppercase text-[#b8a495] font-bold block mb-3">
           Head-to-Head Architecture Showdown:
         </span>
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={compareDbs[0]}
             onChange={(e) => setCompareDbs([e.target.value, compareDbs[1]])}
-            className="bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-xs font-mono text-amber-300 focus:border-amber-400 outline-none"
+            className="bg-[#140d09] border border-[#382519] rounded-xl px-3.5 py-2 text-xs font-mono text-[#fef08a] focus:border-[#fef08a] outline-none"
           >
             {DATABASE_PROFILES.map(d => (
               <option key={d.name} value={d.name}>{d.name}</option>
             ))}
           </select>
-          <span className="text-xs font-bold text-zinc-500">VS</span>
+          <span className="text-xs font-bold text-[#8c786a]">VS</span>
           <select
             value={compareDbs[1]}
             onChange={(e) => setCompareDbs([compareDbs[0], e.target.value])}
-            className="bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-xs font-mono text-zinc-200 focus:border-amber-400 outline-none"
+            className="bg-[#140d09] border border-[#382519] rounded-xl px-3.5 py-2 text-xs font-mono text-white focus:border-[#fef08a] outline-none"
           >
             {DATABASE_PROFILES.map(d => (
               <option key={d.name} value={d.name}>{d.name}</option>
@@ -200,48 +200,48 @@ export default function DbComparisonEngine() {
 
         {/* Head-to-Head Comparison Card Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5 font-mono text-xs">
-          <div className="bg-zinc-950 p-5 rounded-2xl border border-amber-500/40 space-y-2.5 shadow-lg">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
-              <span className="text-amber-400 font-bold text-base">{dbA.name}</span>
-              <span className="text-zinc-500 text-[11px]">{dbA.license}</span>
+          <div className="bg-[#140d09] p-5 rounded-2xl border border-[#fef08a]/40 space-y-2.5 shadow-lg">
+            <div className="flex items-center justify-between border-b border-[#382519] pb-2.5">
+              <span className="text-[#fef08a] font-bold text-base">{dbA.name}</span>
+              <span className="text-[#8c786a] text-[11px]">{dbA.license}</span>
             </div>
-            <div><span className="text-zinc-500">Data Model:</span> <span className="text-zinc-200 font-medium">{dbA.model}</span></div>
-            <div><span className="text-zinc-500">Query Language:</span> <span className="text-zinc-200">{dbA.sql}</span></div>
-            <div><span className="text-zinc-500">ACID Transactions:</span> <span className="text-amber-300 font-bold">{dbA.transactions}</span></div>
-            <div><span className="text-zinc-500">CAP Theorem:</span> <span className="text-amber-400">{dbA.cap}</span></div>
-            <div><span className="text-zinc-500">Scaling:</span> <span className="text-zinc-300">{dbA.scaling}</span></div>
-            <div className="pt-2.5 border-t border-zinc-800">
-              <span className="text-amber-400 font-bold block mb-1">When to Choose:</span>
-              <p className="text-zinc-300 text-[11px] leading-relaxed">{dbA.typicalUse}</p>
+            <div><span className="text-[#8c786a]">Data Model:</span> <span className="text-white font-medium">{dbA.model}</span></div>
+            <div><span className="text-[#8c786a]">Query Language:</span> <span className="text-[#f5ece3]">{dbA.sql}</span></div>
+            <div><span className="text-[#8c786a]">ACID Transactions:</span> <span className="text-[#fef08a] font-bold">{dbA.transactions}</span></div>
+            <div><span className="text-[#8c786a]">CAP Theorem:</span> <span className="text-[#fef08a]">{dbA.cap}</span></div>
+            <div><span className="text-[#8c786a]">Scaling:</span> <span className="text-[#b8a495]">{dbA.scaling}</span></div>
+            <div className="pt-2.5 border-t border-[#382519]">
+              <span className="text-[#fef08a] font-bold block mb-1">When to Choose:</span>
+              <p className="text-[#b8a495] text-[11px] leading-relaxed">{dbA.typicalUse}</p>
             </div>
           </div>
 
-          <div className="bg-zinc-950 p-5 rounded-2xl border border-zinc-800 space-y-2.5 shadow-lg">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+          <div className="bg-[#140d09] p-5 rounded-2xl border border-[#382519] space-y-2.5 shadow-lg">
+            <div className="flex items-center justify-between border-b border-[#382519] pb-2.5">
               <span className="text-white font-bold text-base">{dbB.name}</span>
-              <span className="text-zinc-500 text-[11px]">{dbB.license}</span>
+              <span className="text-[#8c786a] text-[11px]">{dbB.license}</span>
             </div>
-            <div><span className="text-zinc-500">Data Model:</span> <span className="text-zinc-200 font-medium">{dbB.model}</span></div>
-            <div><span className="text-zinc-500">Query Language:</span> <span className="text-zinc-200">{dbB.sql}</span></div>
-            <div><span className="text-zinc-500">ACID Transactions:</span> <span className="text-amber-300 font-bold">{dbB.transactions}</span></div>
-            <div><span className="text-zinc-500">CAP Theorem:</span> <span className="text-amber-400">{dbB.cap}</span></div>
-            <div><span className="text-zinc-500">Scaling:</span> <span className="text-zinc-300">{dbB.scaling}</span></div>
-            <div className="pt-2.5 border-t border-zinc-800">
-              <span className="text-zinc-300 font-bold block mb-1">When to Choose:</span>
-              <p className="text-zinc-300 text-[11px] leading-relaxed">{dbB.typicalUse}</p>
+            <div><span className="text-[#8c786a]">Data Model:</span> <span className="text-white font-medium">{dbB.model}</span></div>
+            <div><span className="text-[#8c786a]">Query Language:</span> <span className="text-[#f5ece3]">{dbB.sql}</span></div>
+            <div><span className="text-[#8c786a]">ACID Transactions:</span> <span className="text-[#fef08a] font-bold">{dbB.transactions}</span></div>
+            <div><span className="text-[#8c786a]">CAP Theorem:</span> <span className="text-[#fef08a]">{dbB.cap}</span></div>
+            <div><span className="text-[#8c786a]">Scaling:</span> <span className="text-[#b8a495]">{dbB.scaling}</span></div>
+            <div className="pt-2.5 border-t border-[#382519]">
+              <span className="text-[#fef08a] font-bold block mb-1">When to Choose:</span>
+              <p className="text-[#b8a495] text-[11px] leading-relaxed">{dbB.typicalUse}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Full Database Matrix Table */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="p-4 bg-zinc-950 border-b border-zinc-800 text-xs font-mono font-bold text-zinc-300">
+      <div className="bg-[#1c130e] border border-[#382519] rounded-3xl overflow-hidden shadow-xl">
+        <div className="p-4 bg-[#140d09] border-b border-[#382519] text-xs font-mono font-bold text-white">
           Complete Industry Database Taxonomy Matrix
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
+            <thead className="bg-[#140d09] text-[#fef08a] border-b border-[#382519]">
               <tr>
                 <th className="p-3.5">Database</th>
                 <th className="p-3.5">Data Model</th>
@@ -250,14 +250,14 @@ export default function DbComparisonEngine() {
                 <th className="p-3.5">Primary Use Case</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800 text-zinc-300">
+            <tbody className="divide-y divide-[#382519] text-[#f5ece3]">
               {filtered.map(db => (
-                <tr key={db.name} className="hover:bg-zinc-800/40 transition">
+                <tr key={db.name} className="hover:bg-[#22160f] transition">
                   <td className="p-3.5 font-bold text-white">{db.name}</td>
                   <td className="p-3.5">{db.model}</td>
                   <td className="p-3.5">{db.sql}</td>
-                  <td className="p-3.5 text-amber-400">{db.transactions}</td>
-                  <td className="p-3.5 text-zinc-400 text-[11px] max-w-xs">{db.typicalUse}</td>
+                  <td className="p-3.5 text-[#fef08a]">{db.transactions}</td>
+                  <td className="p-3.5 text-[#b8a495] text-[11px] max-w-xs">{db.typicalUse}</td>
                 </tr>
               ))}
             </tbody>

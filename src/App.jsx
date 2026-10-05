@@ -22,8 +22,15 @@ import {
   Menu,
   X,
   ChevronRight,
+  ChevronLeft,
   Network,
-  LogOut
+  LogOut,
+  Lock,
+  Unlock,
+  Home,
+  Target,
+  Split,
+  ChevronDown
 } from 'lucide-react';
 
 import { ROADMAP_LEVELS } from './data/dbRoadmap';
@@ -41,6 +48,7 @@ import VerificationPortal from './components/VerificationPortal';
 import CertificateModal from './components/CertificateModal';
 import GoogleAuthModal from './components/GoogleAuthModal';
 import KapilMentorModal from './components/KapilMentorModal';
+import WelcomeGateway from './components/WelcomeGateway';
 
 // Specialized Interactive Labs
 import FileSystemChallenge from './components/labs/FileSystemChallenge';
@@ -58,7 +66,6 @@ import EvolutionTimeline from './components/labs/EvolutionTimeline';
 import NoSqlWorkbench from './components/labs/NoSqlWorkbench';
 import InterviewSimulator from './components/labs/InterviewSimulator';
 import PlacementReadinessView from './components/labs/PlacementReadinessView';
-import WelcomeGateway from './components/WelcomeGateway';
 
 export default function App() {
   // Loading Gateway State (Note from Kapil & Sign-In)
@@ -66,10 +73,13 @@ export default function App() {
     return sessionStorage.getItem('dbms_entered') === 'true';
   });
 
+  // Collapsible Left Navigation Bar State
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
   // Navigation View State
-  const [currentView, setCurrentView] = useState('home'); // home, roadmap, ide, lab, placement, projects, comparison, verification, dashboard, admin
+  const [currentView, setCurrentView] = useState('home'); // home, roadmap, roadmap-detail, ide, er-studio, normalization, placement, projects, comparison, readiness, verification, dashboard, admin
   const [selectedLevelId, setSelectedLevelId] = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // PWA Offline & Install State
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -89,8 +99,8 @@ export default function App() {
       xp: 450,
       currentLevelId: 0,
       completedLevels: [0],
-      progress: 15,
-      badgesCount: 3,
+      progress: 4,
+      badgesCount: 0,
       projectsCount: 1,
       skills: {
         sql: 82,
@@ -98,7 +108,8 @@ export default function App() {
         design: 68,
         interview: 55
       },
-      placementReadiness: 70
+      placementReadiness: 65,
+      isGoogleAuth: false
     };
   });
 
@@ -175,10 +186,69 @@ export default function App() {
     setLearnerProfile(prev => ({
       ...prev,
       xp: prev.xp + amount,
-      progress: Math.min(100, prev.progress + 2)
+      progress: Math.min(100, Math.round(((prev.completedLevels?.length || 1) / 26) * 100))
     }));
   };
 
+  // Toggle Module Completion state (all 26 modules need completion for unlock)
+  const handleToggleComplete = (levelId) => {
+    setLearnerProfile(prev => {
+      const currentCompleted = prev.completedLevels || [];
+      const isAlreadyComplete = currentCompleted.includes(levelId);
+      const newCompleted = isAlreadyComplete
+        ? currentCompleted.filter(id => id !== levelId)
+        : [...currentCompleted, levelId];
+
+      const newProgress = Math.round((newCompleted.length / 26) * 100);
+      const isNowUnlocked = newCompleted.length >= 26 && (prev.overallScore || 85) >= 90;
+
+      return {
+        ...prev,
+        completedLevels: newCompleted,
+        progress: newProgress,
+        badgesCount: isNowUnlocked ? 11 : 0
+      };
+    });
+  };
+
+  // Demo helper: Unlock all 26 modules and 95% score for instant verification
+  const handleUnlockAllForDemo = () => {
+    const all26 = Array.from({ length: 26 }, (_, i) => i);
+    setLearnerProfile(prev => ({
+      ...prev,
+      completedLevels: all26,
+      progress: 100,
+      badgesCount: 11,
+      overallScore: 95,
+      skills: {
+        sql: 96,
+        theory: 94,
+        design: 95,
+        interview: 92
+      },
+      placementReadiness: 95
+    }));
+  };
+
+  // Demo helper: Reset to locked state
+  const handleResetToLocked = () => {
+    setLearnerProfile(prev => ({
+      ...prev,
+      completedLevels: [0],
+      progress: 4,
+      badgesCount: 0,
+      overallScore: 75,
+      skills: {
+        sql: 82,
+        theory: 75,
+        design: 68,
+        interview: 55
+      },
+      placementReadiness: 65
+    }));
+  };
+
+  // Log Off Handler: Immediately clears session and redirects to Kapil's Note Gateway
   const handleSignOff = async () => {
     try {
       await logoutUser();
@@ -192,15 +262,31 @@ export default function App() {
       photoURL: null,
       isGoogleAuth: false
     }));
+    // Clear session storage and show Note from Kapil page
+    sessionStorage.removeItem('dbms_entered');
+    setHasEntered(false);
   };
 
   const handleLevelSelect = (id) => {
     setSelectedLevelId(id);
     setCurrentView('roadmap-detail');
-    setMobileMenuOpen(false);
+    setMobileSidebarOpen(false);
+  };
+
+  const navigateTo = (view) => {
+    setCurrentView(view);
+    setMobileSidebarOpen(false);
   };
 
   const currentLevelObj = ROADMAP_LEVELS.find(l => l.id === selectedLevelId) || ROADMAP_LEVELS[0];
+
+  // Derived lock status
+  const totalCompleted = learnerProfile.completedLevels?.length || 0;
+  const currentSkills = learnerProfile.skills || { sql: 80, theory: 75, design: 70, interview: 65 };
+  const currentAvgScore = learnerProfile.overallScore || Math.round(
+    ((currentSkills.sql || 80) + (currentSkills.theory || 75) + (currentSkills.design || 70) + (currentSkills.interview || 65)) / 4
+  );
+  const isVaultUnlocked = totalCompleted >= 26 && currentAvgScore >= 90;
 
   // Render Specialized Lab based on level handsOnType
   const renderSpecializedLab = (level) => {
@@ -237,13 +323,14 @@ export default function App() {
         return (
           <PlacementReadinessView
             learnerStats={learnerProfile.skills}
+            completedLevelsCount={totalCompleted}
             onClaimCertificate={() => setIsCertModalOpen(true)}
           />
         );
       case 'projects-hub':
-        return <ProjectsHub onRunQueryInIde={(q) => { setCurrentView('ide'); }} />;
+        return <ProjectsHub onRunQueryInIde={() => setCurrentView('ide')} />;
       case 'placement-challenge':
-        return <PlacementHub onSolveInIde={(q) => { setCurrentView('ide'); }} />;
+        return <PlacementHub onSolveInIde={() => setCurrentView('ide')} />;
       default:
         return (
           <BrowserIDE
@@ -254,6 +341,7 @@ export default function App() {
     }
   };
 
+  // If user hasn't entered (or after log off), render Note from Kapil Gateway
   if (!hasEntered) {
     return (
       <WelcomeGateway
@@ -270,534 +358,795 @@ export default function App() {
     );
   }
 
+  // Sidebar items configuration
+  const navSections = [
+    {
+      title: 'Core Learning',
+      items: [
+        { id: 'home', label: 'Overview & Mission', icon: Home, badge: null },
+        { id: 'roadmap', label: '26 Levels Roadmap', icon: Layers, badge: `${totalCompleted}/26` },
+        { id: 'dashboard', label: 'My Dashboard', icon: BarChart2, badge: null }
+      ]
+    },
+    {
+      title: 'Hands-On Labs (75%)',
+      items: [
+        { id: 'ide', label: 'SQL Studio (IDE)', icon: Terminal, badge: 'LIVE' },
+        { id: 'er-studio', label: 'Automatic ER Studio', icon: Network, badge: 'AUTO' },
+        { id: 'normalization', label: 'Normalization Lab', icon: Split, badge: '0NF-5NF' },
+        { id: 'comparison', label: 'DB Comparison', icon: Scale, badge: null }
+      ]
+    },
+    {
+      title: 'Career & Blueprints',
+      items: [
+        { id: 'placement', label: 'Placement Prep', icon: Briefcase, badge: '100+' },
+        { id: 'projects', label: '10 Real Projects', icon: Cpu, badge: 'PRO' },
+        { id: 'readiness', label: 'Readiness Index', icon: Target, badge: null }
+      ]
+    },
+    {
+      title: 'Credentials & Admin',
+      items: [
+        {
+          id: 'cert-action',
+          label: 'Official Certificate',
+          icon: isVaultUnlocked ? Award : Lock,
+          badge: isVaultUnlocked ? 'UNLOCKED' : 'LOCKED 🔒',
+          action: () => setIsCertModalOpen(true)
+        },
+        { id: 'verification', label: 'Verify Certificate', icon: ShieldCheck, badge: null },
+        { id: 'admin', label: 'Admin Portal', icon: User, badge: null }
+      ]
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-amber-500 selection:text-black">
-      {/* Top Universal Navbar */}
-      <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-zinc-800/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          {/* Logo & Brand */}
-          <div
-            onClick={() => setCurrentView('home')}
-            className="flex items-center gap-3 cursor-pointer group"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-600 flex items-center justify-center text-black font-extrabold shadow-lg shadow-amber-500/20 group-hover:scale-105 transition">
+    <div className="min-h-screen bg-[#140d09] text-[#f5ece3] flex font-sans selection:bg-[#fef08a] selection:text-[#140d09]">
+      {/* ------------------------------------------------------------------ */}
+      {/* LEFT NAVIGATION SIDEBAR (EXPANDABLE & COLLAPSIBLE)                */}
+      {/* ------------------------------------------------------------------ */}
+      <aside
+        className={`hidden md:flex flex-col justify-between shrink-0 bg-[#18110b] border-r border-[#382519] transition-all duration-300 z-30 sticky top-0 h-screen select-none ${
+          sidebarCollapsed ? 'w-20' : 'w-64'
+        }`}
+      >
+        {/* Sidebar Header: Brand & Collapse Toggle */}
+        <div className="p-4 border-b border-[#382519] flex items-center justify-between gap-2">
+          {!sidebarCollapsed ? (
+            <div
+              onClick={() => navigateTo('home')}
+              className="flex items-center gap-3 cursor-pointer group truncate"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#fef08a] via-[#fde047] to-[#facc15] flex items-center justify-center text-[#140d09] font-extrabold shadow-lg shadow-yellow-400/20 group-hover:scale-105 transition shrink-0">
+                <Database className="w-5 h-5 stroke-[2.5]" />
+              </div>
+              <div className="truncate">
+                <div className="font-extrabold text-xs tracking-tight text-white truncate">
+                  DBMS ZERO-TO-INFINITY
+                </div>
+                <div className="text-[10px] text-[#fef08a] font-mono truncate font-bold">
+                  Powered By Kapil
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              onClick={() => navigateTo('home')}
+              className="w-10 h-10 mx-auto rounded-2xl bg-gradient-to-tr from-[#fef08a] via-[#fde047] to-[#facc15] flex items-center justify-center text-[#140d09] font-extrabold shadow-lg shadow-yellow-400/20 cursor-pointer hover:scale-105 transition"
+              title="DBMS Zero-To-Infinity • Powered By Kapil"
+            >
               <Database className="w-5 h-5 stroke-[2.5]" />
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-sm tracking-tight text-white">
-                  DBMS ZERO-TO-INFINITY
-                </span>
-                <span className="text-[10px] bg-amber-950/60 text-amber-300 border border-amber-600/50 px-1.5 py-0.2 rounded font-mono font-bold">
-                  25% Theory • 75% Practice
-                </span>
+          )}
+
+          {/* Toggle Expand / Collapse Button */}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="p-1.5 rounded-xl bg-[#22160f] hover:bg-[#2e1d14] text-[#b8a495] hover:text-[#fef08a] border border-[#382519] transition"
+            title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
+        </div>
+
+        {/* Sidebar Nav Links (Categorized) */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 custom-wooden-scrollbar">
+          {navSections.map((sec, idx) => (
+            <div key={idx} className="space-y-1">
+              {!sidebarCollapsed && (
+                <div className="px-3 pb-1 text-[10px] font-mono uppercase font-bold tracking-wider text-[#8c786a]">
+                  {sec.title}
+                </div>
+              )}
+              {sec.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentView === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (item.action) {
+                        item.action();
+                      } else {
+                        navigateTo(item.id);
+                      }
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-mono text-xs font-semibold transition group text-left ${
+                      isActive
+                        ? 'bg-[#251810] text-[#fef08a] border border-[#fef08a]/40 shadow-md shadow-yellow-400/5'
+                        : 'text-[#b8a495] hover:text-white hover:bg-[#20150e]'
+                    } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
+                    title={sidebarCollapsed ? item.label : undefined}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 transition ${
+                      isActive ? 'text-[#fef08a]' : 'text-[#8c786a] group-hover:text-white'
+                    }`} />
+
+                    {!sidebarCollapsed && (
+                      <span className="truncate flex-1">{item.label}</span>
+                    )}
+
+                    {!sidebarCollapsed && item.badge && (
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold shrink-0 ${
+                        item.badge.includes('LOCK') && !item.badge.includes('UN')
+                          ? 'bg-[#140d09] text-[#fef08a] border border-[#382519]'
+                          : item.badge === 'UNLOCKED'
+                          ? 'bg-[#fef08a] text-[#140d09]'
+                          : 'bg-[#140d09] text-[#fef08a] border border-[#382519]'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        {/* Sidebar Footer: Kapil Note, AI Mentor, Sign Off & Profile */}
+        <div className="p-3 border-t border-[#382519] space-y-2 bg-[#140d09]/60">
+          {/* Note from Kapil Shortcut */}
+          <button
+            onClick={() => setHasEntered(false)}
+            className={`w-full flex items-center gap-2.5 p-2 rounded-xl bg-[#1c130e] hover:bg-[#251810] border border-[#382519] hover:border-[#fef08a]/50 text-[#fef08a] text-xs font-mono transition ${
+              sidebarCollapsed ? 'justify-center p-2' : ''
+            }`}
+            title="Read Note from Kapil (Landing Page)"
+          >
+            <img
+              src="./kapil-hero.jpg"
+              alt="Kapil"
+              className="w-6 h-6 rounded-full object-cover border border-[#fef08a]/60 shrink-0"
+            />
+            {!sidebarCollapsed && (
+              <span className="truncate font-bold text-left flex-1">Note from Kapil</span>
+            )}
+          </button>
+
+          {/* AI Mentor Bot Button */}
+          <button
+            onClick={() => setIsMentorModalOpen(true)}
+            className={`w-full flex items-center gap-2.5 p-2 rounded-xl bg-[#1c130e] hover:bg-[#251810] border border-[#382519] hover:border-[#fef08a]/50 text-white hover:text-[#fef08a] text-xs font-mono transition ${
+              sidebarCollapsed ? 'justify-center p-2' : ''
+            }`}
+            title="Ask Kapil's DBMS Mentor AI"
+          >
+            <Bot className="w-5 h-5 text-[#fef08a] shrink-0" />
+            {!sidebarCollapsed && (
+              <span className="truncate font-bold text-left flex-1">Kapil's AI Mentor</span>
+            )}
+          </button>
+
+          {/* Install App button if available */}
+          {isInstallable && (
+            <button
+              onClick={handleInstallClick}
+              className={`w-full flex items-center gap-2.5 p-2 rounded-xl bg-gradient-to-r from-[#fef08a] to-[#fde047] text-[#140d09] text-xs font-mono font-bold transition shadow-md shadow-yellow-400/20 ${
+                sidebarCollapsed ? 'justify-center p-2' : ''
+              }`}
+              title="Install DBMS Universe PWA"
+            >
+              <Download className="w-5 h-5 shrink-0" />
+              {!sidebarCollapsed && <span className="truncate">Install App</span>}
+            </button>
+          )}
+
+          {/* User Profile & Sign Off / Sign In */}
+          <div className="pt-2 border-t border-[#382519]">
+            {learnerProfile.isGoogleAuth ? (
+              <div className={`flex items-center gap-2 ${sidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
+                {!sidebarCollapsed && (
+                  <div
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="flex items-center gap-2 cursor-pointer truncate flex-1"
+                    title="Account Details"
+                  >
+                    <div className="w-7 h-7 rounded-xl bg-[#2b1c13] border border-[#fef08a]/40 flex items-center justify-center text-[#fef08a] font-bold text-xs shrink-0">
+                      {learnerProfile.name[0]}
+                    </div>
+                    <div className="truncate">
+                      <div className="text-xs text-white font-bold truncate">
+                        {learnerProfile.name.split(' ')[0]}
+                      </div>
+                      <div className="text-[10px] text-[#8c786a] font-mono truncate">
+                        Google Verified
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <button
+                  onClick={handleSignOff}
+                  className="p-2 rounded-xl bg-[#251810] hover:bg-[#3d1814] text-[#b8a495] hover:text-red-300 border border-[#382519] hover:border-red-900/50 transition shrink-0"
+                  title="Sign Off / Log Out (Loads Note from Kapil)"
+                >
+                  <LogOut className="w-4 h-4 text-red-400" />
+                </button>
               </div>
-              <span className="text-[11px] text-zinc-400 font-mono block">
-                Powered By Kapil • SarlaYash Mission Productions
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className={`w-full flex items-center gap-2 p-2 rounded-xl bg-[#251810] hover:bg-[#312015] border border-[#382519] text-[#fef08a] text-xs font-mono font-bold transition ${
+                  sidebarCollapsed ? 'justify-center p-2' : ''
+                }`}
+                title="Sign In with Google"
+              >
+                <User className="w-4 h-4 shrink-0 text-[#fef08a]" />
+                {!sidebarCollapsed && <span className="truncate">Sign In</span>}
+              </button>
+            )}
+          </div>
+        </div>
+      </aside>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* MOBILE DRAWER SIDEBAR                                              */}
+      {/* ------------------------------------------------------------------ */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div
+            className="fixed inset-0 bg-[#140d09]/80 backdrop-blur-sm"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+          <div className="relative w-72 max-w-[85%] bg-[#18110b] border-r border-[#382519] h-full flex flex-col justify-between p-4 z-10 shadow-2xl overflow-y-auto">
+            <div>
+              <div className="flex items-center justify-between pb-4 border-b border-[#382519]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#fef08a] to-[#facc15] flex items-center justify-center text-[#140d09] font-extrabold">
+                    <Database className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="font-extrabold text-xs text-white">DBMS ZERO-TO-INFINITY</div>
+                    <div className="text-[10px] text-[#fef08a] font-mono">Powered By Kapil</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="p-1.5 text-[#b8a495] hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="py-4 space-y-4">
+                {navSections.map((sec, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="text-[10px] font-mono uppercase font-bold text-[#8c786a] px-2">
+                      {sec.title}
+                    </div>
+                    {sec.items.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = currentView === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            if (item.action) {
+                              item.action();
+                            } else {
+                              navigateTo(item.id);
+                            }
+                          }}
+                          className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-mono transition ${
+                            isActive
+                              ? 'bg-[#251810] text-[#fef08a] border border-[#fef08a]/40 font-bold'
+                              : 'text-[#b8a495] hover:text-white hover:bg-[#20150e]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Icon className="w-4 h-4 text-[#fef08a]" />
+                            <span>{item.label}</span>
+                          </div>
+                          {item.badge && (
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#140d09] text-[#fef08a] border border-[#382519]">
+                              {item.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[#382519] space-y-2">
+              <button
+                onClick={() => { setHasEntered(false); setMobileSidebarOpen(false); }}
+                className="w-full flex items-center gap-2 p-2 rounded-xl bg-[#1c130e] text-[#fef08a] text-xs font-mono font-bold border border-[#382519]"
+              >
+                <img src="./kapil-hero.jpg" alt="Kapil" className="w-5 h-5 rounded-full object-cover border border-[#fef08a]" />
+                <span>Note from Kapil</span>
+              </button>
+
+              {learnerProfile.isGoogleAuth ? (
+                <button
+                  onClick={() => { handleSignOff(); setMobileSidebarOpen(false); }}
+                  className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#251810] text-red-400 font-mono text-xs font-bold border border-red-900/50"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Off ({learnerProfile.name.split(' ')[0]})</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => { setIsAuthModalOpen(true); setMobileSidebarOpen(false); }}
+                  className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#fef08a] text-[#140d09] font-mono text-xs font-extrabold"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Sign In with Google</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------------ */}
+      {/* MAIN VIEW CONTENT AREA (RIGHT OF SIDEBAR)                          */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {/* Sleek Top Header (Clean, Zero Clutter) */}
+        <header className="sticky top-0 z-20 bg-[#140d09]/95 backdrop-blur-md border-b border-[#382519] px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            {/* Mobile hamburger menu toggle */}
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="md:hidden p-2 rounded-xl bg-[#1c130e] text-[#fef08a] border border-[#382519]"
+              title="Open Navigation"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Current View Breadcrumb */}
+            <div className="font-mono text-xs text-[#b8a495] flex items-center gap-1.5">
+              <span className="text-white font-bold">DBMS ZERO-TO-INFINITY</span>
+              <span>/</span>
+              <span className="text-[#fef08a] font-bold uppercase">
+                {currentView === 'home' && 'Overview'}
+                {currentView === 'roadmap' && '26 Levels Roadmap'}
+                {currentView === 'roadmap-detail' && `Level ${currentLevelObj.id}: ${currentLevelObj.title}`}
+                {currentView === 'ide' && 'SQL Studio IDE'}
+                {currentView === 'er-studio' && 'Automatic ER Diagram Studio'}
+                {currentView === 'normalization' && 'Normalization Visualization Lab'}
+                {currentView === 'placement' && 'Placement Prep (100+)'}
+                {currentView === 'projects' && '10 Production Blueprints'}
+                {currentView === 'comparison' && 'Database Comparison Engine'}
+                {currentView === 'readiness' && 'Placement Readiness Index'}
+                {currentView === 'verification' && 'Certificate Verification'}
+                {currentView === 'dashboard' && 'Learner Intelligence Dashboard'}
+                {currentView === 'admin' && 'Admin Portal'}
               </span>
             </div>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 text-xs font-mono font-semibold">
-            <button
-              onClick={() => setCurrentView('home')}
-              className={`px-3 py-1.5 rounded-lg transition ${
-                currentView === 'home' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setCurrentView('roadmap')}
-              className={`px-3 py-1.5 rounded-lg transition ${
-                currentView === 'roadmap' || currentView === 'roadmap-detail' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              26 Levels
-            </button>
-            <button
-              onClick={() => setCurrentView('ide')}
-              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
-                currentView === 'ide' ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black font-bold shadow-md shadow-amber-500/20' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              <Terminal className="w-3.5 h-3.5" />
-              SQL Studio
-            </button>
-            <button
-              onClick={() => setCurrentView('er-studio')}
-              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
-                currentView === 'er-studio' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30 font-bold' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              <Network className="w-3.5 h-3.5" />
-              ER Studio
-            </button>
-            <button
-              onClick={() => setCurrentView('placement')}
-              className={`px-3 py-1.5 rounded-lg transition ${
-                currentView === 'placement' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              Placement (100+)
-            </button>
-            <button
-              onClick={() => setCurrentView('projects')}
-              className={`px-3 py-1.5 rounded-lg transition ${
-                currentView === 'projects' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              10 Projects
-            </button>
-            <button
-              onClick={() => setCurrentView('comparison')}
-              className={`px-3 py-1.5 rounded-lg transition ${
-                currentView === 'comparison' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              DB Comparison
-            </button>
-            <button
-              onClick={() => setCurrentView('verification')}
-              className={`px-3 py-1.5 rounded-lg transition ${
-                currentView === 'verification' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
-            >
-              Verify Certificate
-            </button>
-          </nav>
-
-          {/* Right Controls: PWA Offline pill, Install, Sign In / Sign Off, Profile */}
-          <div className="flex items-center gap-2">
-            {/* Offline Status Badge */}
+          {/* Right Top Status & Actions */}
+          <div className="flex items-center gap-2.5">
+            {/* Live Progress Pill */}
             <div
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border ${
-                isOnline
-                  ? 'bg-zinc-900 border-amber-500/40 text-amber-300'
-                  : 'bg-zinc-900 border-zinc-700 text-zinc-400'
-              }`}
-              title={isOnline ? 'Online with full offline cache' : '100% Offline Mode Active (Zero Server Dependency)'}
+              onClick={() => navigateTo('dashboard')}
+              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#1c130e] border border-[#382519] cursor-pointer hover:border-[#fef08a]/40 transition text-xs font-mono"
+              title="Click to view full dashboard"
             >
-              {isOnline ? <Wifi className="w-3 h-3 text-amber-400" /> : <WifiOff className="w-3 h-3 text-zinc-400" />}
-              <span>{isOnline ? 'PWA Ready' : 'Offline'}</span>
+              <span className="text-[#8c786a]">Modules:</span>
+              <span className={`font-bold ${totalCompleted >= 26 ? 'text-emerald-400' : 'text-[#fef08a]'}`}>
+                {totalCompleted}/26
+              </span>
+              <span className="text-[#8c786a]">•</span>
+              <span className="text-[#8c786a]">Score:</span>
+              <span className={`font-bold ${currentAvgScore >= 90 ? 'text-emerald-400' : 'text-white'}`}>
+                {currentAvgScore}%
+              </span>
             </div>
 
-            {/* Install PWA Button */}
-            {isInstallable && (
-              <button
-                onClick={handleInstallClick}
-                className="hidden sm:flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-amber-400 to-yellow-500 hover:brightness-110 text-black rounded-lg text-xs font-mono font-bold transition shadow-sm"
-              >
-                <Download className="w-3 h-3" />
-                Install App
-              </button>
-            )}
+            {/* Offline Status Badge */}
+            <div
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold border ${
+                isOnline
+                  ? 'bg-[#1c130e] border-[#382519] text-[#fef08a]'
+                  : 'bg-[#251810] border-[#382519] text-[#b8a495]'
+              }`}
+              title={isOnline ? 'Online • 100% Offline PWA Ready' : '100% Offline Mode (Zero Server Dependency)'}
+            >
+              {isOnline ? <Wifi className="w-3 h-3 text-[#fef08a]" /> : <WifiOff className="w-3 h-3 text-[#b8a495]" />}
+              <span className="hidden sm:inline">{isOnline ? 'PWA Ready' : 'Offline'}</span>
+            </div>
 
-            {/* Note from Kapil Gateway */}
+            {/* Note from Kapil Button */}
             <button
               onClick={() => setHasEntered(false)}
-              className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/50 rounded-xl text-amber-300 font-mono text-xs transition shadow-sm shadow-amber-500/10"
-              title="Read Note from Kapil"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#1c130e] hover:bg-[#251810] border border-[#fef08a]/40 hover:border-[#fef08a] rounded-xl text-[#fef08a] font-mono text-xs transition shadow-sm font-bold"
+              title="Open Note from Kapil (Landing Page)"
             >
-              <img src="./kapil-hero.jpg" alt="Kapil" className="w-4 h-4 rounded-full object-cover border border-amber-400" />
-              <span className="hidden sm:inline">Note from Kapil</span>
+              <img src="./kapil-hero.jpg" alt="Kapil" className="w-4 h-4 rounded-full object-cover border border-[#fef08a]" />
+              <span>Note from Kapil</span>
             </button>
 
-            {/* Ask AI Mentor */}
+            {/* Kapil's AI Mentor Button */}
             <button
               onClick={() => setIsMentorModalOpen(true)}
-              className="p-1.5 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/40 text-amber-400 rounded-lg transition"
-              title="Kapil's DBMS Mentor"
+              className="p-1.5 sm:px-2.5 sm:py-1.5 bg-[#1c130e] hover:bg-[#251810] border border-[#382519] text-[#fef08a] rounded-xl transition flex items-center gap-1.5 font-mono text-xs"
+              title="Ask Kapil's DBMS Mentor AI"
             >
-              <Bot className="w-4 h-4" />
+              <Bot className="w-4 h-4 text-[#fef08a]" />
+              <span className="hidden xl:inline">AI Mentor</span>
             </button>
 
-            {/* Sign Off / Log Out Button when Authenticated */}
+            {/* Sign Off / Sign In button in header */}
             {learnerProfile.isGoogleAuth ? (
               <button
                 onClick={handleSignOff}
-                className="flex items-center gap-1 px-2.5 py-1.5 bg-zinc-900 hover:bg-red-950/60 text-zinc-300 hover:text-red-300 border border-zinc-800 hover:border-red-900/60 rounded-xl font-mono text-xs transition shadow-sm"
-                title="Sign Off / Log Out"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#251810] hover:bg-[#3d1814] text-[#b8a495] hover:text-red-300 border border-[#382519] hover:border-red-900/50 rounded-xl font-mono text-xs font-bold transition"
+                title="Sign Off (Immediately loads Note from Kapil)"
               >
                 <LogOut className="w-3.5 h-3.5 text-red-400" />
-                <span className="hidden sm:inline font-bold">Sign Off</span>
+                <span className="hidden sm:inline">Sign Off</span>
               </button>
             ) : (
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 hover:from-amber-300 hover:to-yellow-500 text-black font-mono text-xs font-extrabold rounded-xl transition shadow-md shadow-amber-500/20"
-                title="Login / Sign In with Google"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-[#fef08a] via-[#fde047] to-[#facc15] hover:brightness-110 text-[#140d09] font-mono text-xs font-extrabold rounded-xl transition shadow-md shadow-yellow-400/20"
+                title="Sign In with Google"
               >
-                <User className="w-3.5 h-3.5 text-black" />
-                <span>Sign In</span>
+                <User className="w-3.5 h-3.5 text-[#140d09]" />
+                <span className="hidden sm:inline">Sign In</span>
               </button>
             )}
 
-            {/* Profile trigger */}
+            {/* Profile Avatar */}
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/30 rounded-xl transition"
-              title="Account Settings"
+              className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#fef08a] to-[#facc15] flex items-center justify-center font-extrabold text-xs text-[#140d09] shadow-sm hover:scale-105 transition shrink-0"
+              title="Learner Profile"
             >
-              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center font-extrabold text-xs text-black">
-                {learnerProfile.name[0]}
-              </div>
-              <span className="hidden md:inline text-xs font-mono font-semibold text-zinc-200">
-                {learnerProfile.name.split(' ')[0]}
-              </span>
-            </button>
-
-            {/* Mobile menu toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 text-zinc-400 hover:text-white"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {learnerProfile.name ? learnerProfile.name[0].toUpperCase() : 'K'}
             </button>
           </div>
-        </div>
+        </header>
 
-        {/* Mobile dropdown menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-zinc-950 border-b border-zinc-800 p-4 space-y-2 text-xs font-mono">
-            <button
-              onClick={() => { setCurrentView('home'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-zinc-300"
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => { setCurrentView('roadmap'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-zinc-300"
-            >
-              26 Levels Roadmap
-            </button>
-            <button
-              onClick={() => { setCurrentView('ide'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-amber-400 font-bold"
-            >
-              SQL Studio (IDE)
-            </button>
-            <button
-              onClick={() => { setCurrentView('er-studio'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-amber-300 font-bold flex items-center gap-2"
-            >
-              <Network className="w-3.5 h-3.5" />
-              Automatic ER Diagram Studio
-            </button>
-            <button
-              onClick={() => { setCurrentView('placement'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-zinc-300"
-            >
-              Placement Prep (100+)
-            </button>
-            <button
-              onClick={() => { setCurrentView('projects'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-zinc-300"
-            >
-              10 Real Projects
-            </button>
-            <button
-              onClick={() => { setCurrentView('comparison'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-zinc-300"
-            >
-              Database Comparison Engine
-            </button>
-            <button
-              onClick={() => { setCurrentView('verification'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-zinc-300"
-            >
-              Verify Certificate
-            </button>
-            {learnerProfile.isGoogleAuth ? (
-              <button
-                onClick={() => { handleSignOff(); setMobileMenuOpen(false); }}
-                className="w-full text-left p-2 rounded hover:bg-red-950/40 text-red-400 font-bold flex items-center gap-2 border-t border-zinc-800 pt-2.5 mt-2"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                Sign Off ({learnerProfile.name})
-              </button>
-            ) : (
-              <button
-                onClick={() => { setIsAuthModalOpen(true); setMobileMenuOpen(false); }}
-                className="w-full text-left p-2 rounded bg-amber-400 text-black font-extrabold flex items-center gap-2 border-t border-zinc-800 pt-2.5 mt-2"
-              >
-                <User className="w-3.5 h-3.5 text-black" />
-                Sign In with Google
-              </button>
-            )}
-            <button
-              onClick={() => { setCurrentView('admin'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-amber-300"
-            >
-              Admin Dashboard
-            </button>
-          </div>
-        )}
-      </header>
+        {/* Main Content Render */}
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+          {/* VIEW 1: HOME / LANDING & DASHBOARD */}
+          {currentView === 'home' && (
+            <div className="space-y-10">
+              {/* Hero Section */}
+              <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1c130e] border border-[#fef08a]/40 text-[#fef08a] text-xs font-mono shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5 text-[#fef08a]" />
+                  <span>Zero Software Purchase • Zero Paid IDE • 100% In-Browser & Offline</span>
+                </div>
+                <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                  From Files to Databases.<br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fef9c3] via-[#fef08a] to-[#fde047]">
+                    From Learner to Database Engineer.
+                  </span>
+                </h1>
+                <p className="text-[#f5ece3] text-sm sm:text-base leading-relaxed">
+                  A browser-based, hands-on DBMS ecosystem that takes you from fundamental byte storage and file structures to enterprise database engineering with <strong className="text-white">25% Theory + 75% Hands-On Practice</strong>.
+                </p>
 
-      {/* Main App Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
-        {/* VIEW 1: HOME / LANDING & DASHBOARD */}
-        {currentView === 'home' && (
-          <div className="space-y-10">
-            {/* Hero Section */}
-            <div className="text-center max-w-3xl mx-auto space-y-4 pt-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/90 border border-amber-500/40 text-amber-300 text-xs font-mono shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Zero Software Purchase • Zero Paid IDE • 100% In-Browser & Offline</span>
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => handleLevelSelect(0)}
+                    className="px-6 py-3 bg-gradient-to-r from-[#fef08a] via-[#fde047] to-[#facc15] hover:brightness-110 text-[#140d09] font-mono text-xs font-extrabold rounded-xl transition shadow-lg shadow-yellow-400/20 flex items-center gap-2"
+                  >
+                    Start From Zero (Level 0) <ChevronRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => navigateTo('ide')}
+                    className="px-6 py-3 bg-[#1c130e] hover:bg-[#251810] border border-[#382519] hover:border-[#fef08a]/50 text-white font-mono text-xs font-bold rounded-xl transition flex items-center gap-2"
+                  >
+                    <Terminal className="w-4 h-4 text-[#fef08a]" />
+                    Open SQL Studio
+                  </button>
+                  <button
+                    onClick={() => navigateTo('er-studio')}
+                    className="px-6 py-3 bg-[#1c130e] hover:bg-[#251810] border border-[#382519] hover:border-[#fef08a]/50 text-white font-mono text-xs font-bold rounded-xl transition flex items-center gap-2"
+                  >
+                    <Network className="w-4 h-4 text-[#fef08a]" />
+                    Automatic ER Studio
+                  </button>
+                  <button
+                    onClick={() => navigateTo('dashboard')}
+                    className="px-6 py-3 bg-[#1c130e] hover:bg-[#251810] border border-[#382519] hover:border-[#fef08a]/50 text-white font-mono text-xs font-bold rounded-xl transition flex items-center gap-2"
+                  >
+                    <BarChart2 className="w-4 h-4 text-[#fef08a]" />
+                    My Dashboard
+                  </button>
+                </div>
               </div>
-              <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                From Files to Databases.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
-                  From Learner to Database Engineer.
+
+              {/* Core Philosophy Banner: Learn -> Practice -> Build -> Assess -> Earn -> Showcase */}
+              <div className="bg-[#1c130e] border border-[#382519] rounded-3xl p-6 shadow-xl">
+                <span className="text-xs font-mono uppercase text-[#b8a495] font-bold block text-center mb-4">
+                  Core SarlaYash Learning Architecture:
                 </span>
-              </h1>
-              <p className="text-zinc-300 text-sm sm:text-base leading-relaxed">
-                A browser-based, hands-on DBMS learning ecosystem that takes you from zero knowledge of data storage and file systems to industry-ready database engineering with <strong className="text-white">25% Theory + 75% Hands-On Practice</strong>.
-              </p>
-
-              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                <button
-                  onClick={() => handleLevelSelect(0)}
-                  className="px-6 py-3 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 hover:brightness-110 text-black font-mono text-xs font-extrabold rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center gap-2"
-                >
-                  Start From Zero (Level 0) <ChevronRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setCurrentView('ide')}
-                  className="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-amber-500/50 text-white font-mono text-xs font-bold rounded-xl transition flex items-center gap-2"
-                >
-                  <Terminal className="w-4 h-4 text-amber-400" />
-                  Open SQL Studio
-                </button>
-                <button
-                  onClick={() => setCurrentView('dashboard')}
-                  className="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-amber-500/50 text-white font-mono text-xs font-bold rounded-xl transition flex items-center gap-2"
-                >
-                  <BarChart2 className="w-4 h-4 text-amber-400" />
-                  My Dashboard
-                </button>
-              </div>
-            </div>
-
-            {/* Core Philosophy Banner: Learn -> Practice -> Build -> Assess -> Earn -> Showcase */}
-            <div className="bg-zinc-950/90 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-              <span className="text-xs font-mono uppercase text-zinc-400 font-bold block text-center mb-4">
-                Core SarlaYash Learning Architecture:
-              </span>
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-center font-mono text-xs">
-                <div className="p-3 bg-black rounded-xl border border-zinc-800">
-                  <span className="text-amber-400 font-bold block mb-1">1. LEARN</span>
-                  <span className="text-zinc-400 text-[11px]">Why & First Principles</span>
-                </div>
-                <div className="p-3 bg-black rounded-xl border border-zinc-800">
-                  <span className="text-zinc-200 font-bold block mb-1">2. PRACTICE</span>
-                  <span className="text-zinc-400 text-[11px]">Browser SQL Sandbox</span>
-                </div>
-                <div className="p-3 bg-black rounded-xl border border-zinc-800">
-                  <span className="text-amber-300 font-bold block mb-1">3. BUILD</span>
-                  <span className="text-zinc-400 text-[11px]">10 Real Projects</span>
-                </div>
-                <div className="p-3 bg-black rounded-xl border border-zinc-800">
-                  <span className="text-zinc-300 font-bold block mb-1">4. ASSESS</span>
-                  <span className="text-zinc-400 text-[11px]">Micro & Final Checks</span>
-                </div>
-                <div className="p-3 bg-black rounded-xl border border-zinc-800">
-                  <span className="text-amber-400 font-bold block mb-1">5. EARN</span>
-                  <span className="text-zinc-400 text-[11px]">Verifiable Certificates</span>
-                </div>
-                <div className="p-3 bg-black rounded-xl border border-zinc-800">
-                  <span className="text-zinc-100 font-bold block mb-1">6. SHOWCASE</span>
-                  <span className="text-zinc-400 text-[11px]">Placement Readiness</span>
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-center font-mono text-xs">
+                  <div className="p-3 bg-[#140d09] rounded-2xl border border-[#382519]">
+                    <span className="text-[#fef08a] font-bold block mb-1">1. LEARN</span>
+                    <span className="text-[#b8a495] text-[11px]">Why & Principles</span>
+                  </div>
+                  <div className="p-3 bg-[#140d09] rounded-2xl border border-[#382519]">
+                    <span className="text-white font-bold block mb-1">2. PRACTICE</span>
+                    <span className="text-[#b8a495] text-[11px]">Browser SQL Sandbox</span>
+                  </div>
+                  <div className="p-3 bg-[#140d09] rounded-2xl border border-[#382519]">
+                    <span className="text-[#fef08a] font-bold block mb-1">3. BUILD</span>
+                    <span className="text-[#b8a495] text-[11px]">10 Real Projects</span>
+                  </div>
+                  <div className="p-3 bg-[#140d09] rounded-2xl border border-[#382519]">
+                    <span className="text-white font-bold block mb-1">4. ASSESS</span>
+                    <span className="text-[#b8a495] text-[11px]">Quizzes & Rubrics</span>
+                  </div>
+                  <div className="p-3 bg-[#140d09] rounded-2xl border border-[#382519]">
+                    <span className="text-[#fef08a] font-bold block mb-1">5. EARN</span>
+                    <span className="text-[#b8a495] text-[11px]">Verifiable Credentials</span>
+                  </div>
+                  <div className="p-3 bg-[#140d09] rounded-2xl border border-[#382519]">
+                    <span className="text-white font-bold block mb-1">6. SHOWCASE</span>
+                    <span className="text-[#b8a495] text-[11px]">Placement Readiness</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Learner Dashboard Quick Preview */}
+              {/* Learner Dashboard */}
+              <LearnerDashboard
+                learnerProfile={learnerProfile}
+                onNavigateLevel={(lvlId) => handleLevelSelect(lvlId)}
+                onOpenCertificate={() => setIsCertModalOpen(true)}
+                onUnlockAllForDemo={handleUnlockAllForDemo}
+                onResetToLocked={handleResetToLocked}
+              />
+            </div>
+          )}
+
+          {/* VIEW 2: ROADMAP (ALL 26 LEVELS) */}
+          {currentView === 'roadmap' && (
+            <div className="space-y-6">
+              <div className="bg-[#1c130e] border border-[#382519] rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+                <div>
+                  <h1 className="text-2xl font-bold text-white">
+                    Zero &rarr; Infinity DBMS Roadmap (Levels 0 - 25)
+                  </h1>
+                  <p className="text-[#b8a495] text-xs font-mono mt-1">
+                    26 Evolutionary Levels • 75% Hands-On Laboratories • Placement Ready
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="bg-[#140d09] px-4 py-2 rounded-2xl border border-[#382519] text-xs font-mono">
+                    <span className="text-[#8c786a]">Completed: </span>
+                    <strong className={totalCompleted >= 26 ? 'text-emerald-400' : 'text-[#fef08a]'}>
+                      {totalCompleted} / 26
+                    </strong>
+                  </div>
+                  {totalCompleted < 26 && (
+                    <button
+                      onClick={handleUnlockAllForDemo}
+                      className="px-3 py-2 bg-[#251810] hover:bg-[#312015] border border-[#fef08a]/40 text-[#fef08a] rounded-xl font-mono text-xs font-bold transition"
+                      title="Mark all 26 modules complete for evaluation"
+                    >
+                      Test Complete All
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {ROADMAP_LEVELS.map(lvl => {
+                  const isDone = learnerProfile.completedLevels?.includes(lvl.id);
+                  return (
+                    <div
+                      key={lvl.id}
+                      onClick={() => handleLevelSelect(lvl.id)}
+                      className={`bg-[#1c130e] hover:bg-[#251810] border rounded-3xl p-5 cursor-pointer transition flex flex-col justify-between space-y-3 group shadow-xl ${
+                        isDone
+                          ? 'border-emerald-500/50 shadow-emerald-950/20'
+                          : 'border-[#382519] hover:border-[#fef08a]/50'
+                      }`}
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold text-[#fef08a] uppercase bg-[#140d09] px-2 py-0.5 rounded border border-[#382519]">
+                            Level {lvl.id} • {lvl.stage}
+                          </span>
+                          {isDone ? (
+                            <span className="text-[10px] font-mono font-bold text-emerald-400 flex items-center gap-1 bg-[#140d09] px-2 py-0.5 rounded border border-emerald-500/40">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Complete
+                            </span>
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-[#8c786a] group-hover:text-[#fef08a] transition" />
+                          )}
+                        </div>
+
+                        <h3 className="font-bold text-white text-base group-hover:text-[#fef08a] transition">
+                          {lvl.title}
+                        </h3>
+                        <div className="text-xs text-[#fef08a] font-mono">
+                          {lvl.tagline}
+                        </div>
+                        <p className="text-[#b8a495] text-xs line-clamp-2">
+                          {lvl.summary}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 border-t border-[#382519] flex items-center justify-between text-[11px] font-mono text-[#8c786a]">
+                        <span>{lvl.challenges?.length || 1} Challenges</span>
+                        <span className="text-[#fef08a] font-bold">+100 XP</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 3: LEVEL DETAIL & LAB */}
+          {currentView === 'roadmap-detail' && (
+            <div className="space-y-6">
+              {/* Breadcrumb Navigation & Jump Dropdown */}
+              <div className="flex items-center justify-between font-mono text-xs">
+                <button
+                  onClick={() => navigateTo('roadmap')}
+                  className="text-[#b8a495] hover:text-[#fef08a] flex items-center gap-1 transition"
+                >
+                  &larr; Back to 26 Levels
+                </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#8c786a]">Jump Level:</span>
+                  <select
+                    value={selectedLevelId}
+                    onChange={(e) => setSelectedLevelId(Number(e.target.value))}
+                    className="bg-[#1c130e] border border-[#382519] text-white rounded-xl px-2.5 py-1 text-xs font-mono outline-none focus:border-[#fef08a]"
+                  >
+                    {ROADMAP_LEVELS.map(l => (
+                      <option key={l.id} value={l.id}>
+                        Level {l.id}: {l.title} {learnerProfile.completedLevels?.includes(l.id) ? '✓' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Theory View with Mark as Complete */}
+              <LevelTheoryView
+                level={currentLevelObj}
+                isCompleted={learnerProfile.completedLevels?.includes(currentLevelObj.id)}
+                onToggleComplete={handleToggleComplete}
+                onLaunchLab={() => {
+                  const labEl = document.getElementById('hands-on-lab-container');
+                  if (labEl) labEl.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+
+              {/* Hands-On Interactive Laboratory Container */}
+              <div id="hands-on-lab-container" className="pt-4 space-y-4">
+                <div className="flex items-center gap-2 text-xs font-mono uppercase font-bold text-[#b8a495]">
+                  <Terminal className="w-4 h-4 text-[#fef08a]" />
+                  <span>Hands-On Laboratory (75% Practice): {currentLevelObj.title}</span>
+                </div>
+                {renderSpecializedLab(currentLevelObj)}
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 4: BROWSER SQL IDE */}
+          {currentView === 'ide' && (
+            <div className="h-[calc(100vh-8.5rem)]">
+              <BrowserIDE
+                currentLevel={currentLevelObj}
+                onXpEarned={handleAddXp}
+              />
+            </div>
+          )}
+
+          {/* VIEW: AUTOMATIC ER DIAGRAM STUDIO */}
+          {currentView === 'er-studio' && (
+            <ErDiagramStudio />
+          )}
+
+          {/* VIEW: NORMALIZATION VISUALIZATION LAB */}
+          {currentView === 'normalization' && (
+            <NormalizationWorkbench />
+          )}
+
+          {/* VIEW 5: PLACEMENT ENGINE */}
+          {currentView === 'placement' && (
+            <PlacementHub
+              onSolveInIde={() => navigateTo('ide')}
+            />
+          )}
+
+          {/* VIEW 6: 10 REAL PROJECTS */}
+          {currentView === 'projects' && (
+            <ProjectsHub
+              onRunQueryInIde={() => navigateTo('ide')}
+            />
+          )}
+
+          {/* VIEW 7: DATABASE COMPARISON ENGINE */}
+          {currentView === 'comparison' && (
+            <DbComparisonEngine />
+          )}
+
+          {/* VIEW: READINESS INDEX */}
+          {currentView === 'readiness' && (
+            <PlacementReadinessView
+              learnerStats={learnerProfile.skills}
+              completedLevelsCount={totalCompleted}
+              onClaimCertificate={() => setIsCertModalOpen(true)}
+            />
+          )}
+
+          {/* VIEW 8: CERTIFICATE VERIFICATION PORTAL */}
+          {currentView === 'verification' && (
+            <VerificationPortal initialCertId={learnerProfile.learningId} />
+          )}
+
+          {/* VIEW 9: LEARNER DASHBOARD */}
+          {currentView === 'dashboard' && (
             <LearnerDashboard
               learnerProfile={learnerProfile}
               onNavigateLevel={(lvlId) => handleLevelSelect(lvlId)}
               onOpenCertificate={() => setIsCertModalOpen(true)}
+              onUnlockAllForDemo={handleUnlockAllForDemo}
+              onResetToLocked={handleResetToLocked}
             />
-          </div>
-        )}
+          )}
 
-        {/* VIEW 2: ROADMAP (ALL 26 LEVELS) */}
-        {currentView === 'roadmap' && (
-          <div className="space-y-6">
-            <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
-              <h1 className="text-2xl font-bold text-white">
-                Zero &rarr; Infinity DBMS Roadmap (Levels 0 - 25)
-              </h1>
-              <p className="text-zinc-400 text-xs font-mono mt-1">
-                26 Evolutionary Levels • 75% Hands-On Laboratories • Placement Ready
-              </p>
+          {/* VIEW 10: ADMIN DASHBOARD */}
+          {currentView === 'admin' && (
+            <AdminDashboard />
+          )}
+        </main>
+
+        {/* Universal Footer */}
+        <footer className="border-t border-[#382519] bg-[#140d09] py-6 mt-12 text-center text-xs font-mono text-[#8c786a]">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div>
+              DBMS Zero-To-Infinity • Powered By Kapil | SarlaYash Mission Productions
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {ROADMAP_LEVELS.map(lvl => (
-                <div
-                  key={lvl.id}
-                  onClick={() => handleLevelSelect(lvl.id)}
-                  className="bg-zinc-950/80 hover:bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-2xl p-5 cursor-pointer transition flex flex-col justify-between space-y-3 group shadow-lg shadow-black/40"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold text-amber-400 uppercase bg-black px-2 py-0.5 rounded border border-zinc-800">
-                        Level {lvl.id} • {lvl.stage}
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-amber-400 transition" />
-                    </div>
-
-                    <h3 className="font-bold text-white text-base group-hover:text-amber-300 transition">
-                      {lvl.title}
-                    </h3>
-                    <div className="text-xs text-amber-400 font-mono">
-                      {lvl.tagline}
-                    </div>
-                    <p className="text-zinc-400 text-xs line-clamp-2">
-                      {lvl.summary}
-                    </p>
-                  </div>
-
-                  <div className="pt-2 border-t border-zinc-850 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-                    <span>{lvl.challenges?.length || 1} Challenges</span>
-                    <span className="text-amber-400 font-bold">+100 XP</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* VIEW 3: LEVEL DETAIL & LAB */}
-        {currentView === 'roadmap-detail' && (
-          <div className="space-y-6">
-            {/* Breadcrumb Navigation */}
-            <div className="flex items-center justify-between font-mono text-xs">
-              <button
-                onClick={() => setCurrentView('roadmap')}
-                className="text-zinc-400 hover:text-amber-400 flex items-center gap-1 transition"
-              >
-                &larr; Back to 26 Levels
+            <div className="flex items-center gap-4">
+              <button onClick={() => navigateTo('verification')} className="hover:text-[#fef08a] transition">
+                Verify Certificate
               </button>
-              <div className="flex items-center gap-2">
-                <span className="text-zinc-500">Jump Level:</span>
-                <select
-                  value={selectedLevelId}
-                  onChange={(e) => setSelectedLevelId(Number(e.target.value))}
-                  className="bg-zinc-900 border border-zinc-700 text-white rounded px-2 py-1 text-xs font-mono outline-none focus:border-amber-400"
-                >
-                  {ROADMAP_LEVELS.map(l => (
-                    <option key={l.id} value={l.id}>Level {l.id}: {l.title}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Theory View */}
-            <LevelTheoryView
-              level={currentLevelObj}
-              onLaunchLab={() => {
-                const labEl = document.getElementById('hands-on-lab-container');
-                if (labEl) labEl.scrollIntoView({ behavior: 'smooth' });
-              }}
-            />
-
-            {/* Hands-On Interactive Laboratory Container */}
-            <div id="hands-on-lab-container" className="pt-4 space-y-4">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase font-bold text-zinc-400">
-                <Terminal className="w-4 h-4 text-amber-400" />
-                <span>Hands-On Laboratory (75% Practice): {currentLevelObj.title}</span>
-              </div>
-              {renderSpecializedLab(currentLevelObj)}
+              <button onClick={() => navigateTo('admin')} className="hover:text-[#fef08a] transition">
+                Admin Portal
+              </button>
+              <span className="text-[#fef08a] font-bold">100% Offline PWA</span>
             </div>
           </div>
-        )}
+        </footer>
+      </div>
 
-        {/* VIEW 4: BROWSER SQL IDE */}
-        {currentView === 'ide' && (
-          <div className="h-[calc(100vh-8.5rem)]">
-            <BrowserIDE
-              currentLevel={currentLevelObj}
-              onXpEarned={handleAddXp}
-            />
-          </div>
-        )}
-
-        {/* VIEW: AUTOMATIC ER DIAGRAM STUDIO */}
-        {currentView === 'er-studio' && (
-          <ErDiagramStudio />
-        )}
-
-        {/* VIEW 5: PLACEMENT ENGINE */}
-        {currentView === 'placement' && (
-          <PlacementHub
-            onSolveInIde={(q) => {
-              setCurrentView('ide');
-            }}
-          />
-        )}
-
-        {/* VIEW 6: 10 REAL PROJECTS */}
-        {currentView === 'projects' && (
-          <ProjectsHub
-            onRunQueryInIde={(q) => {
-              setCurrentView('ide');
-            }}
-          />
-        )}
-
-        {/* VIEW 7: DATABASE COMPARISON ENGINE */}
-        {currentView === 'comparison' && (
-          <DbComparisonEngine />
-        )}
-
-        {/* VIEW 8: CERTIFICATE VERIFICATION PORTAL */}
-        {currentView === 'verification' && (
-          <VerificationPortal initialCertId={learnerProfile.learningId} />
-        )}
-
-        {/* VIEW 9: LEARNER DASHBOARD */}
-        {currentView === 'dashboard' && (
-          <LearnerDashboard
-            learnerProfile={learnerProfile}
-            onNavigateLevel={(lvlId) => handleLevelSelect(lvlId)}
-            onOpenCertificate={() => setIsCertModalOpen(true)}
-          />
-        )}
-
-        {/* VIEW 10: ADMIN DASHBOARD */}
-        {currentView === 'admin' && (
-          <AdminDashboard />
-        )}
-      </main>
-
-      {/* Universal Footer */}
-      <footer className="border-t border-zinc-900 bg-black/95 py-6 mt-12 text-center text-xs font-mono text-zinc-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div>
-            DBMS Zero-To-Infinity • Powered By Kapil | SarlaYash Mission Productions
-          </div>
-          <div className="flex items-center gap-4">
-            <button onClick={() => setCurrentView('verification')} className="hover:text-amber-400 transition">
-              Verify Certificate
-            </button>
-            <button onClick={() => setCurrentView('admin')} className="hover:text-amber-400 transition">
-              Admin Portal
-            </button>
-            <span className="text-amber-400 font-bold">100% Offline PWA</span>
-          </div>
-        </div>
-      </footer>
-
-      {/* Modals */}
+      {/* ------------------------------------------------------------------ */}
+      {/* MODALS                                                             */}
+      {/* ------------------------------------------------------------------ */}
       <CertificateModal
         isOpen={isCertModalOpen}
         onClose={() => setIsCertModalOpen(false)}
         learnerProfile={learnerProfile}
+        onCompleteAllModules={handleUnlockAllForDemo}
+        onBoostScoreTo90={handleUnlockAllForDemo}
       />
 
       <GoogleAuthModal

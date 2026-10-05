@@ -13,7 +13,7 @@ export default function KapilMentorModal({ isOpen, onClose, topicContext, curren
       case 'WHY':
         return {
           heading: 'Why did this concept have to be invented?',
-          text: topicContext?.theory?.why || 'Before this concept existed, computers suffered from data inconsistency, lack of atomicity, and massive disk I/O bottlenecks. Inventing this abstraction allowed decoupled, declarative applications to scale with integrity.'
+          text: topicContext?.theory?.why || 'Before this concept existed, computer systems suffered from data anomalies, lost updates under concurrent access, and unpredictable disk I/O bottlenecks. Inventing this abstraction allowed decoupled, declarative applications to scale with integrity.'
         };
       case 'WHAT':
         return {
@@ -23,7 +23,7 @@ export default function KapilMentorModal({ isOpen, onClose, topicContext, curren
       case 'HOW':
         return {
           heading: 'How does it execute under the hood?',
-          text: `Under the hood, the SQL parser compiles your query into an abstract syntax tree (AST), runs cost-based optimization (CBO), and evaluates physical operators such as Hash Join, Nested Loop, or Index Scan on 8KB disk pages.`
+          text: `Under the hood, the SQL parser compiles your declarative statement into an Abstract Syntax Tree (AST), performs cost-based optimization (CBO), and evaluates physical operators such as Hash Join, B-Tree Index Seek, or Table Scans across disk pages.`
         };
       case 'WHERE_USED':
         return {
@@ -32,13 +32,13 @@ export default function KapilMentorModal({ isOpen, onClose, topicContext, curren
         };
       case 'COMMON_MISTAKE':
         return {
-          heading: 'What common mistake or trap catches junior developers?',
-          text: topicContext?.theory?.commonMyth || 'A critical trap is confusing conceptual modeling with physical storage, or assuming the database engine will automatically fix non-sargable query predicates without proper indexing.'
+          heading: 'What common mistake or trap catches developers?',
+          text: topicContext?.theory?.commonMyth || 'A critical trap is confusing conceptual modeling with physical storage, or assuming the database engine will automatically fix non-sargable query predicates without proper index design.'
         };
       case 'INTERVIEW_QUESTION':
         return {
-          heading: 'What question do tech companies (TCS, Infosys, Amazon) ask on this?',
-          text: topicContext?.quiz?.[0]?.question || 'Explain the internal difference between a full table scan and a B-Tree index scan, and how isolation levels prevent dirty reads.'
+          heading: 'What question do tech companies ask on this?',
+          text: topicContext?.quiz?.[0]?.question || 'Explain the internal difference between a clustered and non-clustered index, and how ACID isolation levels prevent phantom reads.'
         };
       case 'PRACTICE_QUESTION':
         return {
@@ -63,42 +63,42 @@ export default function KapilMentorModal({ isOpen, onClose, topicContext, curren
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-zinc-950 border border-zinc-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+    <div className="fixed inset-0 z-50 bg-[#140d09]/85 backdrop-blur-md flex items-center justify-center p-4 font-sans">
+      <div className="bg-[#1c130e] border border-[#382519] w-full max-w-2xl rounded-3xl shadow-2xl shadow-black/80 overflow-hidden flex flex-col max-h-[85vh]">
         {/* Modal Header */}
-        <div className="p-4 bg-gradient-to-r from-black via-zinc-950 to-zinc-900 border-b border-zinc-800 flex items-center justify-between">
+        <div className="p-4 bg-[#140d09] border-b border-[#382519] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-black border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-sm">
-              <Bot className="w-5 h-5 text-amber-400" />
+            <div className="w-9 h-9 rounded-xl bg-[#22160f] border border-[#fef08a]/40 flex items-center justify-center text-[#fef08a] shadow-sm">
+              <Bot className="w-5 h-5 text-[#fef08a]" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-sm text-white">Kapil's DBMS Mentor</span>
-                <span className="text-[10px] bg-black text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/40 font-mono">
-                  AI Guidance
+                <span className="text-[10px] bg-[#1c130e] text-[#fef08a] px-1.5 py-0.5 rounded border border-[#382519] font-mono">
+                  SarlaYash AI
                 </span>
               </div>
-              <span className="text-xs text-zinc-400 font-mono">{title}</span>
+              <span className="text-xs text-[#b8a495] font-mono">{title}</span>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-900 transition"
+            className="p-1.5 text-[#b8a495] hover:text-white rounded-lg hover:bg-[#251810] transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Aspects Tabs */}
-        <div className="flex overflow-x-auto border-b border-zinc-800 bg-black/80 p-2 gap-1.5 scrollbar-none">
+        <div className="flex overflow-x-auto border-b border-[#382519] bg-[#140d09] p-2 gap-1.5 scrollbar-none">
           {aspects.map(a => (
             <button
               key={a.id}
               onClick={() => setActiveAspect(a.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono whitespace-nowrap transition font-bold ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono whitespace-nowrap transition font-bold ${
                 activeAspect === a.id
-                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black shadow-md shadow-amber-500/20'
-                  : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+                  ? 'bg-gradient-to-r from-[#fef08a] to-[#fde047] text-[#140d09] shadow-md shadow-yellow-400/20'
+                  : 'bg-[#1c130e] text-[#b8a495] hover:text-white hover:bg-[#251810] border border-[#382519]'
               }`}
             >
               {a.label}
@@ -106,32 +106,43 @@ export default function KapilMentorModal({ isOpen, onClose, topicContext, curren
           ))}
         </div>
 
-        {/* Mentor Content */}
-        <div className="p-5 overflow-y-auto space-y-4 font-mono text-xs">
-          <div className="bg-black p-4 rounded-xl border border-zinc-800 space-y-2">
-            <span className="text-amber-400 font-bold text-sm block">
-              {content.heading}
+        {/* Content Box */}
+        <div className="p-6 overflow-y-auto space-y-4 bg-gradient-to-b from-[#1c130e] to-[#140d09]">
+          <div className="space-y-1">
+            <span className="text-xs font-mono uppercase text-[#fef08a] font-bold block">
+              {activeAspect} Perspective:
             </span>
-            <p className="text-zinc-300 leading-relaxed text-xs whitespace-pre-wrap">
-              {content.text}
-            </p>
+            <h2 className="text-base font-bold text-white">
+              {content.heading}
+            </h2>
+          </div>
+
+          <div className="bg-[#140d09] border border-[#382519] rounded-2xl p-4 text-xs font-mono text-[#f5ece3] leading-relaxed">
+            {content.text}
           </div>
 
           {currentQuery && (
-            <div className="bg-black/60 p-3 rounded-lg border border-zinc-800 text-[11px]">
-              <span className="text-zinc-500 block mb-1">Your Currently Active SQL Query:</span>
-              <pre className="text-amber-300 overflow-x-auto">{currentQuery}</pre>
+            <div className="pt-2 border-t border-[#382519]">
+              <span className="text-[11px] font-mono text-[#8c786a] block mb-1">
+                Contextual SQL Inspection:
+              </span>
+              <pre className="bg-[#140d09] border border-[#382519] p-2.5 rounded-xl text-[11px] text-[#fef08a] overflow-x-auto">
+                {currentQuery}
+              </pre>
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="p-3 bg-black/90 border-t border-zinc-800 text-right">
+        {/* Modal Footer */}
+        <div className="p-3 bg-[#140d09] border-t border-[#382519] flex items-center justify-between text-xs font-mono">
+          <span className="text-[#8c786a] text-[11px]">
+            Powered By Kapil • 25% Theory + 75% Hands-On Practice
+          </span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white font-mono text-xs rounded-lg transition border border-zinc-800"
+            className="px-4 py-1.5 bg-[#251810] hover:bg-[#312015] border border-[#382519] text-[#fef08a] rounded-xl font-bold transition"
           >
-            Back to Code Lab
+            Got It
           </button>
         </div>
       </div>
