@@ -54,8 +54,14 @@ import EvolutionTimeline from './components/labs/EvolutionTimeline';
 import NoSqlWorkbench from './components/labs/NoSqlWorkbench';
 import InterviewSimulator from './components/labs/InterviewSimulator';
 import PlacementReadinessView from './components/labs/PlacementReadinessView';
+import WelcomeGateway from './components/WelcomeGateway';
 
 export default function App() {
+  // Loading Gateway State (Note from Kapil & Sign-In)
+  const [hasEntered, setHasEntered] = useState(() => {
+    return sessionStorage.getItem('dbms_entered') === 'true';
+  });
+
   // Navigation View State
   const [currentView, setCurrentView] = useState('home'); // home, roadmap, ide, lab, placement, projects, comparison, verification, dashboard, admin
   const [selectedLevelId, setSelectedLevelId] = useState(0);
@@ -227,6 +233,22 @@ export default function App() {
     }
   };
 
+  if (!hasEntered) {
+    return (
+      <WelcomeGateway
+        onEnterApp={() => {
+          setHasEntered(true);
+          sessionStorage.setItem('dbms_entered', 'true');
+        }}
+        onGoogleSignInSuccess={(user) => {
+          setLearnerProfile(prev => ({ ...prev, ...user }));
+          setHasEntered(true);
+          sessionStorage.setItem('dbms_entered', 'true');
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       {/* Top Universal Navbar */}
@@ -341,6 +363,16 @@ export default function App() {
                 Install App
               </button>
             )}
+
+            {/* Note from Kapil Gateway */}
+            <button
+              onClick={() => setHasEntered(false)}
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-950/60 hover:bg-amber-900/60 border border-amber-600/50 rounded-xl text-amber-300 font-mono text-xs transition"
+              title="Read Note from Kapil"
+            >
+              <img src="./kapil-hero.jpg" alt="Kapil" className="w-4 h-4 rounded-full object-cover border border-amber-400" />
+              <span className="hidden sm:inline">Note from Kapil</span>
+            </button>
 
             {/* Ask AI Mentor */}
             <button
