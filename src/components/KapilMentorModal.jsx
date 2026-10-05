@@ -63,42 +63,42 @@ export default function KapilMentorModal({ isOpen, onClose, topicContext, curren
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-zinc-950 border border-zinc-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Modal Header */}
-        <div className="p-4 bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border-b border-slate-800 flex items-center justify-between">
+        <div className="p-4 bg-gradient-to-r from-black via-zinc-950 to-zinc-900 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-600/30 border border-blue-500/50 flex items-center justify-center text-blue-400">
-              <Bot className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-lg bg-black border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-sm">
+              <Bot className="w-5 h-5 text-amber-400" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-sm text-white">Kapil's DBMS Mentor</span>
-                <span className="text-[10px] bg-blue-900/60 text-blue-300 px-1.5 py-0.5 rounded border border-blue-700">
+                <span className="text-[10px] bg-black text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/40 font-mono">
                   AI Guidance
                 </span>
               </div>
-              <span className="text-xs text-slate-400 font-mono">{title}</span>
+              <span className="text-xs text-zinc-400 font-mono">{title}</span>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-900 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Aspects Tabs */}
-        <div className="flex overflow-x-auto border-b border-slate-800 bg-slate-950/60 p-2 gap-1.5 scrollbar-none">
+        <div className="flex overflow-x-auto border-b border-zinc-800 bg-black/80 p-2 gap-1.5 scrollbar-none">
           {aspects.map(a => (
             <button
               key={a.id}
               onClick={() => setActiveAspect(a.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono whitespace-nowrap transition font-bold ${
                 activeAspect === a.id
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black shadow-md shadow-amber-500/20'
+                  : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
               }`}
             >
               {a.label}
@@ -108,28 +108,28 @@ export default function KapilMentorModal({ isOpen, onClose, topicContext, curren
 
         {/* Mentor Content */}
         <div className="p-5 overflow-y-auto space-y-4 font-mono text-xs">
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-            <span className="text-blue-400 font-bold text-sm block">
+          <div className="bg-black p-4 rounded-xl border border-zinc-800 space-y-2">
+            <span className="text-amber-400 font-bold text-sm block">
               {content.heading}
             </span>
-            <p className="text-slate-300 leading-relaxed text-xs whitespace-pre-wrap">
+            <p className="text-zinc-300 leading-relaxed text-xs whitespace-pre-wrap">
               {content.text}
             </p>
           </div>
 
           {currentQuery && (
-            <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800 text-[11px]">
-              <span className="text-slate-500 block mb-1">Your Currently Active SQL Query:</span>
-              <pre className="text-emerald-400 overflow-x-auto">{currentQuery}</pre>
+            <div className="bg-black/60 p-3 rounded-lg border border-zinc-800 text-[11px]">
+              <span className="text-zinc-500 block mb-1">Your Currently Active SQL Query:</span>
+              <pre className="text-amber-300 overflow-x-auto">{currentQuery}</pre>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="p-3 bg-slate-950/80 border-t border-slate-800 text-right">
+        <div className="p-3 bg-black/90 border-t border-zinc-800 text-right">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs rounded-lg transition"
+            className="px-4 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white font-mono text-xs rounded-lg transition border border-zinc-800"
           >
             Back to Code Lab
           </button>

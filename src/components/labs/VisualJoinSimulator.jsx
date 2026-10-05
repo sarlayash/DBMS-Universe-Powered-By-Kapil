@@ -159,12 +159,12 @@ export default function VisualJoinSimulator() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-        <div className="flex items-center gap-2 text-purple-400 font-bold text-lg mb-1">
-          <GitMerge className="w-5 h-5" />
+      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 shadow-xl">
+        <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
+          <GitMerge className="w-5 h-5 text-amber-400" />
           <span>Level 6 Signature: Visual Join Simulator</span>
         </div>
-        <p className="text-slate-300 text-sm">
+        <p className="text-zinc-300 text-sm">
           Select two tables below and visually witness <strong>which rows survive the join</strong> and which columns are padded with NULL!
         </p>
 
@@ -176,8 +176,8 @@ export default function VisualJoinSimulator() {
               onClick={() => setJoinType(type)}
               className={`px-3 py-1.5 text-xs font-mono rounded-lg transition font-semibold ${
                 joinType === type
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/40'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black font-extrabold shadow-md shadow-amber-500/20'
+                  : 'bg-black text-zinc-300 hover:text-white border border-zinc-800'
               }`}
             >
               {type} JOIN
@@ -189,23 +189,23 @@ export default function VisualJoinSimulator() {
       {/* Source Tables Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Table A */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-md">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono font-bold text-blue-400">TABLE A: employees (Left Table)</span>
-            <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">5 Rows</span>
+            <span className="text-xs font-mono font-bold text-amber-400">TABLE A: employees (Left Table)</span>
+            <span className="text-[10px] bg-black text-zinc-400 border border-zinc-800 px-2 py-0.5 rounded">5 Rows</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="text-slate-400 border-b border-slate-800">
+              <thead className="text-zinc-400 border-b border-zinc-800">
                 <tr>
                   <th className="p-1.5">emp_id</th>
                   <th className="p-1.5">name</th>
                   <th className="p-1.5">dept_id</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-zinc-800/60">
                 {tableEmployees.map(e => (
-                  <tr key={e.emp_id} className={e.dept_id === 'HR' ? 'bg-amber-950/20 text-amber-300' : 'text-slate-300'}>
+                  <tr key={e.emp_id} className={e.dept_id === 'HR' ? 'bg-amber-950/30 text-amber-300' : 'text-zinc-300'}>
                     <td className="p-1.5">{e.emp_id}</td>
                     <td className="p-1.5">{e.name}</td>
                     <td className="p-1.5 font-bold">{e.dept_id}</td>
@@ -214,29 +214,29 @@ export default function VisualJoinSimulator() {
               </tbody>
             </table>
           </div>
-          <p className="text-[11px] text-slate-400 mt-2 italic">
+          <p className="text-[11px] text-zinc-400 mt-2 italic">
             * Note: Employee Arun has dept_id 'HR' which has NO match in Table B.
           </p>
         </div>
 
         {/* Table B */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-md">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono font-bold text-emerald-400">TABLE B: departments (Right Table)</span>
-            <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">4 Rows</span>
+            <span className="text-xs font-mono font-bold text-zinc-200">TABLE B: departments (Right Table)</span>
+            <span className="text-[10px] bg-black text-zinc-400 border border-zinc-800 px-2 py-0.5 rounded">4 Rows</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="text-slate-400 border-b border-slate-800">
+              <thead className="text-zinc-400 border-b border-zinc-800">
                 <tr>
                   <th className="p-1.5">dept_id</th>
                   <th className="p-1.5">dept_name</th>
                   <th className="p-1.5">budget</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-zinc-800/60">
                 {tableDepartments.map(d => (
-                  <tr key={d.dept_id} className={d.dept_id === 'OPS' ? 'bg-amber-950/20 text-amber-300' : 'text-slate-300'}>
+                  <tr key={d.dept_id} className={d.dept_id === 'OPS' ? 'bg-amber-950/30 text-amber-300' : 'text-zinc-300'}>
                     <td className="p-1.5 font-bold">{d.dept_id}</td>
                     <td className="p-1.5">{d.dept_name}</td>
                     <td className="p-1.5">{d.budget}</td>
@@ -245,34 +245,34 @@ export default function VisualJoinSimulator() {
               </tbody>
             </table>
           </div>
-          <p className="text-[11px] text-slate-400 mt-2 italic">
+          <p className="text-[11px] text-zinc-400 mt-2 italic">
             * Note: Department 'OPS' has NO matching employees in Table A.
           </p>
         </div>
       </div>
 
       {/* Generated SQL Banner */}
-      <div className="bg-slate-950 border border-purple-500/30 rounded-xl p-4">
-        <div className="flex items-center gap-2 text-purple-300 font-semibold text-xs mb-1">
-          <Sparkles className="w-3.5 h-3.5" />
+      <div className="bg-black border border-amber-500/40 rounded-xl p-4 shadow-lg shadow-amber-500/10">
+        <div className="flex items-center gap-2 text-amber-300 font-semibold text-xs mb-1">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           <span>Synthesized SQL Statement for {joinType} JOIN</span>
         </div>
-        <pre className="text-xs font-mono text-purple-200 whitespace-pre-wrap">
+        <pre className="text-xs font-mono text-amber-200 whitespace-pre-wrap">
           {getSqlString()}
         </pre>
       </div>
 
       {/* Surviving Rows Output Table */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-        <div className="p-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
-          <span className="text-slate-200 font-bold">
+      <div className="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl">
+        <div className="p-3 bg-black border-b border-zinc-800 flex items-center justify-between text-xs font-mono">
+          <span className="text-white font-bold">
             SURVIVING ROWS: {rows.length} rows returned
           </span>
-          <span className="text-purple-400">Join Predicate: A.dept_id = B.dept_id</span>
+          <span className="text-amber-400">Join Predicate: A.dept_id = B.dept_id</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-800/60 text-slate-300 border-b border-slate-700">
+            <thead className="bg-zinc-900 text-zinc-300 border-b border-zinc-800">
               <tr>
                 <th className="p-3">emp_id</th>
                 <th className="p-3">name</th>
@@ -282,14 +282,14 @@ export default function VisualJoinSimulator() {
                 <th className="p-3">Survival Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-zinc-800">
               {rows.map((r, idx) => (
                 <tr
                   key={idx}
                   className={`transition ${
                     r.status.includes('NULL')
                       ? 'bg-amber-950/20 text-amber-200 hover:bg-amber-950/40'
-                      : 'hover:bg-slate-800/40 text-slate-200'
+                      : 'hover:bg-zinc-900/60 text-zinc-200'
                   }`}
                 >
                   <td className="p-3">{r.emp_id}</td>
@@ -301,7 +301,7 @@ export default function VisualJoinSimulator() {
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         r.status === 'MATCHED'
-                          ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                          ? 'bg-zinc-900 text-amber-300 border border-amber-500/40'
                           : 'bg-amber-950 text-amber-400 border border-amber-800'
                       }`}
                     >

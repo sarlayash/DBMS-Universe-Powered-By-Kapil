@@ -71,21 +71,21 @@ export default function TransactionCrashSimulator() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 shadow-xl">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
-              <Zap className="w-5 h-5" />
+              <Zap className="w-5 h-5 text-amber-400" />
               <span>Level 10 Signature: ACID Bank Transfer & Crash Simulation</span>
             </div>
-            <p className="text-slate-300 text-sm max-w-2xl">
+            <p className="text-zinc-300 text-sm max-w-2xl">
               Watch what happens when a database crashes midway between Account A and Account B debit/credit operations.
               Experience how Write-Ahead Logging (WAL) and Atomicity prevent catastrophic money evaporation!
             </p>
           </div>
           <button
             onClick={resetTransfer}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-black hover:bg-zinc-900 text-zinc-300 rounded-lg border border-zinc-800 transition"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reset State
@@ -96,7 +96,7 @@ export default function TransactionCrashSimulator() {
           <button
             onClick={() => setActiveTab('bank-crash')}
             className={`px-3 py-1.5 text-xs rounded-lg font-mono font-semibold transition ${
-              activeTab === 'bank-crash' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              activeTab === 'bank-crash' ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black font-extrabold shadow-md shadow-amber-500/20' : 'bg-black text-zinc-300 hover:text-white border border-zinc-800'
             }`}
           >
             Bank Transfer Crash Simulator
@@ -104,7 +104,7 @@ export default function TransactionCrashSimulator() {
           <button
             onClick={() => setActiveTab('anomalies')}
             className={`px-3 py-1.5 text-xs rounded-lg font-mono font-semibold transition ${
-              activeTab === 'anomalies' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              activeTab === 'anomalies' ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black font-extrabold shadow-md shadow-amber-500/20' : 'bg-black text-zinc-300 hover:text-white border border-zinc-800'
             }`}
           >
             Concurrency Anomalies
@@ -112,7 +112,7 @@ export default function TransactionCrashSimulator() {
           <button
             onClick={() => setActiveTab('isolation')}
             className={`px-3 py-1.5 text-xs rounded-lg font-mono font-semibold transition ${
-              activeTab === 'isolation' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              activeTab === 'isolation' ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black font-extrabold shadow-md shadow-amber-500/20' : 'bg-black text-zinc-300 hover:text-white border border-zinc-800'
             }`}
           >
             Isolation Levels Matrix
@@ -126,12 +126,12 @@ export default function TransactionCrashSimulator() {
           <div className="lg:col-span-2 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               {/* Account Alice */}
-              <div className={`p-4 rounded-xl border transition ${
-                step >= 2 && !isRolledBack ? 'bg-red-950/30 border-red-500/50' : 'bg-slate-900 border-slate-800'
+              <div className={`p-4 rounded-xl border transition shadow-md ${
+                step >= 2 && !isRolledBack ? 'bg-red-950/30 border-red-500/50' : 'bg-zinc-950 border-zinc-800'
               }`}>
-                <span className="text-xs font-mono text-slate-400 block mb-1">Source Account A</span>
+                <span className="text-xs font-mono text-zinc-400 block mb-1">Source Account A</span>
                 <span className="font-bold text-white text-base">Alice Johnson (ACC_1001)</span>
-                <div className="mt-3 text-2xl font-mono font-extrabold text-emerald-400">
+                <div className="mt-3 text-2xl font-mono font-extrabold text-amber-400">
                   ₹{accountA.toLocaleString()}
                 </div>
                 {step >= 2 && (
@@ -142,20 +142,20 @@ export default function TransactionCrashSimulator() {
               </div>
 
               {/* Account Bob */}
-              <div className={`p-4 rounded-xl border transition ${
-                step === 4 ? 'bg-emerald-950/30 border-emerald-500/50' : 'bg-slate-900 border-slate-800'
+              <div className={`p-4 rounded-xl border transition shadow-md ${
+                step === 4 ? 'bg-zinc-900 border-amber-500/50' : 'bg-zinc-950 border-zinc-800'
               }`}>
-                <span className="text-xs font-mono text-slate-400 block mb-1">Destination Account B</span>
+                <span className="text-xs font-mono text-zinc-400 block mb-1">Destination Account B</span>
                 <span className="font-bold text-white text-base">Bob Smith (ACC_1002)</span>
-                <div className="mt-3 text-2xl font-mono font-extrabold text-blue-400">
+                <div className="mt-3 text-2xl font-mono font-extrabold text-white">
                   ₹{accountB.toLocaleString()}
                 </div>
                 {step === 4 ? (
-                  <span className="text-xs text-emerald-400 font-mono mt-1 block">
+                  <span className="text-xs text-amber-300 font-mono mt-1 block">
                     +₹10,000 credited & committed!
                   </span>
                 ) : (
-                  <span className="text-xs text-slate-500 font-mono mt-1 block">
+                  <span className="text-xs text-zinc-500 font-mono mt-1 block">
                     Awaiting incoming transfer...
                   </span>
                 )}
@@ -163,8 +163,8 @@ export default function TransactionCrashSimulator() {
             </div>
 
             {/* Interactive Timeline Stepper */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
-              <span className="text-xs font-mono uppercase text-slate-400 font-bold block">
+            <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 space-y-3 shadow-md">
+              <span className="text-xs font-mono uppercase text-zinc-400 font-bold block">
                 Execution Steps: ₹10,000 Transfer
               </span>
 
@@ -172,7 +172,7 @@ export default function TransactionCrashSimulator() {
                 {step === 0 && (
                   <button
                     onClick={runStep}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-mono font-bold rounded-lg transition"
+                    className="px-4 py-2 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 hover:brightness-110 text-black text-xs font-mono font-extrabold rounded-lg transition shadow-md shadow-amber-500/20"
                   >
                     1. Execute BEGIN TRANSACTION
                   </button>
@@ -180,7 +180,7 @@ export default function TransactionCrashSimulator() {
                 {step === 1 && (
                   <button
                     onClick={runStep}
-                    className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-mono font-bold rounded-lg transition"
+                    className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold rounded-lg transition"
                   >
                     2. Execute UPDATE Alice (-₹10,000)
                   </button>
@@ -196,7 +196,7 @@ export default function TransactionCrashSimulator() {
                     </button>
                     <button
                       onClick={runStep}
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-mono font-bold rounded-lg transition"
+                      className="px-4 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-xs font-mono font-bold rounded-lg transition"
                     >
                       3. Continue to UPDATE Bob (+₹10,000)
                     </button>
@@ -205,7 +205,7 @@ export default function TransactionCrashSimulator() {
                 {step === 3 && (
                   <button
                     onClick={runStep}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-mono font-bold rounded-lg transition"
+                    className="px-4 py-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-xs font-mono font-bold rounded-lg transition"
                   >
                     4. Execute COMMIT
                   </button>
@@ -215,17 +215,17 @@ export default function TransactionCrashSimulator() {
           </div>
 
           {/* WAL Log Monitor */}
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs">
+          <div className="bg-black border border-zinc-800 rounded-xl p-4 font-mono text-xs shadow-xl">
             <span className="text-amber-400 font-bold block mb-2">Write-Ahead Log (WAL) Console</span>
-            <div className="space-y-1.5 max-h-[220px] overflow-y-auto text-slate-300">
+            <div className="space-y-1.5 max-h-[220px] overflow-y-auto text-zinc-300">
               {walLogs.length === 0 ? (
-                <div className="text-slate-600 italic">Logs will stream as transactions execute...</div>
+                <div className="text-zinc-600 italic">Logs will stream as transactions execute...</div>
               ) : (
                 walLogs.map((log, i) => (
                   <div key={i} className={`p-1 rounded ${
                     log.includes('CRASH') ? 'bg-red-950 text-red-300 font-bold' :
-                    log.includes('PRESERVED') ? 'bg-emerald-950 text-emerald-300 font-bold' :
-                    'text-slate-400'
+                    log.includes('PRESERVED') ? 'bg-black border border-amber-500/40 text-amber-300 font-bold' :
+                    'text-zinc-400'
                   }`}>
                     {log}
                   </div>
@@ -237,14 +237,14 @@ export default function TransactionCrashSimulator() {
       )}
 
       {activeTab === 'anomalies' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 space-y-4 shadow-xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-mono">
             {['dirty-read', 'lost-update', 'non-repeatable', 'phantom-read'].map(type => (
               <button
                 key={type}
                 onClick={() => setAnomalyType(type)}
                 className={`p-2.5 rounded-lg border text-center transition uppercase font-bold ${
-                  anomalyType === type ? 'bg-amber-950 border-amber-500 text-amber-200' : 'bg-slate-950 border-slate-800 text-slate-400'
+                  anomalyType === type ? 'bg-black border-amber-500 text-amber-300 shadow-sm' : 'bg-black border-zinc-800 text-zinc-400'
                 }`}
               >
                 {type.replace('-', ' ')}
@@ -252,45 +252,45 @@ export default function TransactionCrashSimulator() {
             ))}
           </div>
 
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
+          <div className="bg-black p-4 rounded-xl border border-zinc-800 text-xs font-mono space-y-2">
             {anomalyType === 'dirty-read' && (
               <>
                 <span className="text-amber-400 font-bold text-sm block">Dirty Read (Reading Uncommitted Garbage):</span>
-                <p className="text-slate-300">
+                <p className="text-zinc-300">
                   Transaction T1 modifies a row. Transaction T2 reads the modified row. T1 then executes ROLLBACK!
                   T2 has now made financial calculations based on phantom data that never legally existed in the database!
                 </p>
-                <div className="text-slate-500 bg-slate-900 p-2 rounded">Prevented by: Read Committed, Repeatable Read, Serializable</div>
+                <div className="text-zinc-400 bg-zinc-900 p-2 rounded border border-zinc-800">Prevented by: Read Committed, Repeatable Read, Serializable</div>
               </>
             )}
             {anomalyType === 'lost-update' && (
               <>
                 <span className="text-red-400 font-bold text-sm block">Lost Update:</span>
-                <p className="text-slate-300">
+                <p className="text-zinc-300">
                   Transaction T1 and T2 both read balance = ₹50,000. T1 adds ₹5,000 and writes ₹55,000.
                   T2 subtracts ₹2,000 from the original read and writes ₹48,000. T1's ₹5,000 deposit is completely wiped out!
                 </p>
-                <div className="text-slate-500 bg-slate-900 p-2 rounded">Prevented by: Row-level locking (SELECT FOR UPDATE) or Repeatable Read</div>
+                <div className="text-zinc-400 bg-zinc-900 p-2 rounded border border-zinc-800">Prevented by: Row-level locking (SELECT FOR UPDATE) or Repeatable Read</div>
               </>
             )}
             {anomalyType === 'non-repeatable' && (
               <>
-                <span className="text-blue-400 font-bold text-sm block">Non-Repeatable Read:</span>
-                <p className="text-slate-300">
+                <span className="text-amber-300 font-bold text-sm block">Non-Repeatable Read:</span>
+                <p className="text-zinc-300">
                   Transaction T1 reads row (balance = ₹10,000). Transaction T2 updates balance to ₹20,000 and COMMITS.
                   T1 re-reads the exact same row and receives ₹20,000. The same query yielded two different results inside one transaction!
                 </p>
-                <div className="text-slate-500 bg-slate-900 p-2 rounded">Prevented by: Repeatable Read, Serializable</div>
+                <div className="text-zinc-400 bg-zinc-900 p-2 rounded border border-zinc-800">Prevented by: Repeatable Read, Serializable</div>
               </>
             )}
             {anomalyType === 'phantom-read' && (
               <>
-                <span className="text-purple-400 font-bold text-sm block">Phantom Read:</span>
-                <p className="text-slate-300">
+                <span className="text-zinc-200 font-bold text-sm block">Phantom Read:</span>
+                <p className="text-zinc-300">
                   Transaction T1 executes `SELECT COUNT(*) WHERE branch = 'CSE'` and gets 50.
                   Transaction T2 inserts a 51st student and COMMITS. T1 repeats the count query and sees 51 tuples!
                 </p>
-                <div className="text-slate-500 bg-slate-900 p-2 rounded">Prevented by: Serializable (Range Locks / Next-Key Locks)</div>
+                <div className="text-zinc-400 bg-zinc-900 p-2 rounded border border-zinc-800">Prevented by: Serializable (Range Locks / Next-Key Locks)</div>
               </>
             )}
           </div>
@@ -298,9 +298,9 @@ export default function TransactionCrashSimulator() {
       )}
 
       {activeTab === 'isolation' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div className="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-950 text-slate-400 border-b border-slate-800">
+            <thead className="bg-black text-zinc-400 border-b border-zinc-800">
               <tr>
                 <th className="p-3">Isolation Level</th>
                 <th className="p-3">Dirty Read</th>
@@ -308,7 +308,7 @@ export default function TransactionCrashSimulator() {
                 <th className="p-3">Phantom Read</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
+            <tbody className="divide-y divide-zinc-800 text-zinc-300">
               <tr>
                 <td className="p-3 font-bold text-red-400">Read Uncommitted</td>
                 <td className="p-3 text-red-400">Allowed</td>
@@ -317,21 +317,21 @@ export default function TransactionCrashSimulator() {
               </tr>
               <tr>
                 <td className="p-3 font-bold text-amber-400">Read Committed (PostgreSQL / Oracle Default)</td>
-                <td className="p-3 text-emerald-400">Prevented</td>
+                <td className="p-3 text-amber-300 font-bold">Prevented</td>
                 <td className="p-3 text-red-400">Allowed</td>
                 <td className="p-3 text-red-400">Allowed</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-blue-400">Repeatable Read (MySQL InnoDB Default)</td>
-                <td className="p-3 text-emerald-400">Prevented</td>
-                <td className="p-3 text-emerald-400">Prevented</td>
-                <td className="p-3 text-red-400">Allowed (MySQL prevents via Next-Key)</td>
+                <td className="p-3 font-bold text-zinc-200">Repeatable Read (MySQL InnoDB Default)</td>
+                <td className="p-3 text-amber-300 font-bold">Prevented</td>
+                <td className="p-3 text-amber-300 font-bold">Prevented</td>
+                <td className="p-3 text-zinc-400">Prevented in MySQL InnoDB</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-emerald-400">Serializable (Highest Isolation)</td>
-                <td className="p-3 text-emerald-400">Prevented</td>
-                <td className="p-3 text-emerald-400">Prevented</td>
-                <td className="p-3 text-emerald-400">Prevented</td>
+                <td className="p-3 font-bold text-amber-400">Serializable (Highest Isolation)</td>
+                <td className="p-3 text-amber-300 font-bold">Prevented</td>
+                <td className="p-3 text-amber-300 font-bold">Prevented</td>
+                <td className="p-3 text-amber-300 font-bold">Prevented</td>
               </tr>
             </tbody>
           </table>

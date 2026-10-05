@@ -68,25 +68,25 @@ export default function EvolutionTimeline() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
         <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
-          <History className="w-5 h-5" />
+          <History className="w-5 h-5 text-amber-400" />
           <span>Level 18: Database Evolution Interactive Visual Timeline</span>
         </div>
-        <p className="text-slate-300 text-sm">
+        <p className="text-zinc-300 text-sm">
           "Technology evolves because the problems evolve." Follow the evolutionary chain from 1960s flat files to 2026 AI vector engines!
         </p>
 
         {/* Timeline Horizontal Selector */}
-        <div className="flex overflow-x-auto gap-2 mt-4 pb-2 scrollbar-none font-mono text-xs">
+        <div className="flex overflow-x-auto gap-2 mt-5 pb-2 scrollbar-none font-mono text-xs">
           {EVOLUTION_MILESTONES.map((m, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedIdx(idx)}
-              className={`px-3 py-1.5 rounded-xl whitespace-nowrap transition font-bold border ${
+              className={`px-3.5 py-2 rounded-xl whitespace-nowrap transition font-bold border ${
                 selectedIdx === idx
-                  ? 'bg-amber-600 border-amber-500 text-white shadow-lg'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black border-amber-400 shadow-lg shadow-amber-500/20 font-extrabold'
+                  : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
               }`}
             >
               {m.era}: {m.title.split(' ')[0]}
@@ -96,31 +96,31 @@ export default function EvolutionTimeline() {
       </div>
 
       {/* Selected Era Deep Dive Card */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 font-mono text-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 font-mono text-xs space-y-4 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-3 gap-2">
           <div>
-            <span className="text-amber-400 font-bold text-xs uppercase">{active.era} ERA</span>
+            <span className="text-amber-400 font-bold text-xs uppercase tracking-wider">{active.era} ERA</span>
             <h2 className="text-base font-bold text-white mt-0.5">{active.title}</h2>
           </div>
-          <span className="text-[11px] bg-slate-950 text-slate-400 px-3 py-1 rounded-full border border-slate-800">
+          <span className="text-[11px] bg-zinc-950 text-zinc-400 px-3 py-1 rounded-full border border-zinc-800 self-start sm:self-auto">
             Evolution Step {selectedIdx + 1} of 8
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-slate-950 p-4 rounded-xl border border-red-900/30 space-y-1">
+          <div className="bg-zinc-950 p-4 rounded-xl border border-red-900/40 space-y-1.5 shadow-md">
             <span className="text-red-400 font-bold block">The Bottleneck / Crisis:</span>
-            <p className="text-slate-300 leading-relaxed text-[11px]">{active.breakdown}</p>
+            <p className="text-zinc-300 leading-relaxed text-[11px]">{active.breakdown}</p>
           </div>
 
-          <div className="bg-slate-950 p-4 rounded-xl border border-blue-900/30 space-y-1">
-            <span className="text-blue-400 font-bold block">Business Problem Trigger:</span>
-            <p className="text-slate-300 leading-relaxed text-[11px]">{active.problem}</p>
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-1.5 shadow-md">
+            <span className="text-zinc-200 font-bold block">Business Problem Trigger:</span>
+            <p className="text-zinc-300 leading-relaxed text-[11px]">{active.problem}</p>
           </div>
 
-          <div className="bg-slate-950 p-4 rounded-xl border border-emerald-900/30 space-y-1">
-            <span className="text-emerald-400 font-bold block">Architectural Innovation:</span>
-            <p className="text-slate-300 leading-relaxed text-[11px]">{active.solution}</p>
+          <div className="bg-zinc-950 p-4 rounded-xl border border-amber-500/40 space-y-1.5 shadow-md">
+            <span className="text-amber-400 font-bold block">Architectural Innovation:</span>
+            <p className="text-zinc-300 leading-relaxed text-[11px]">{active.solution}</p>
           </div>
         </div>
       </div>

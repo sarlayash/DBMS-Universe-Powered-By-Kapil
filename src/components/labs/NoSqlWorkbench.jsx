@@ -4,30 +4,21 @@ import { FileJson, Layers, Database, ArrowRight, CheckCircle2 } from 'lucide-rea
 export default function NoSqlWorkbench() {
   const [modelType, setModelType] = useState('document'); // 'document', 'keyvalue', 'graph', 'widecolumn'
 
-  // The common problem: Storing an E-Commerce User Order with Reviews and Cart Items
-  const sampleData = {
-    user: 'Aarav Sharma (ID: 101)',
-    orderId: 'ORD-9821',
-    product: 'MacBook Air M3',
-    price: 114900,
-    review: 'Blazing fast, 18-hour battery life!'
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <div className="flex items-center gap-2 text-pink-400 font-bold text-lg mb-1">
-          <FileJson className="w-5 h-5" />
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+        <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
+          <FileJson className="w-5 h-5 text-amber-400" />
           <span>Level 20: NoSQL Paradigm Workbench</span>
         </div>
-        <p className="text-slate-300 text-sm max-w-2xl">
+        <p className="text-zinc-300 text-sm max-w-2xl">
           Solve the identical real-world e-commerce data problem across 4 different database paradigms:
           <strong> Document (MongoDB), Key-Value (Redis), Graph (Neo4j), and Wide-Column (Cassandra)</strong>.
         </p>
 
         {/* Model Tabs */}
-        <div className="flex flex-wrap gap-2 mt-4 font-mono text-xs">
+        <div className="flex flex-wrap gap-2 mt-5 font-mono text-xs">
           {[
             { id: 'document', name: 'Document (MongoDB)', icon: 'JSON' },
             { id: 'keyvalue', name: 'Key-Value (Redis)', icon: 'K-V' },
@@ -37,10 +28,10 @@ export default function NoSqlWorkbench() {
             <button
               key={m.id}
               onClick={() => setModelType(m.id)}
-              className={`px-3 py-1.5 rounded-xl font-bold transition border ${
+              className={`px-4 py-2 rounded-xl font-bold transition border ${
                 modelType === m.id
-                  ? 'bg-pink-600 border-pink-500 text-white shadow-lg'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black border-amber-400 shadow-lg shadow-amber-500/20 font-extrabold'
+                  : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
               }`}
             >
               {m.name}
@@ -50,17 +41,17 @@ export default function NoSqlWorkbench() {
       </div>
 
       {/* Model Representation Card */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 font-mono text-xs space-y-4">
+      <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 font-mono text-xs space-y-4 shadow-xl">
         {modelType === 'document' && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-emerald-400 font-bold text-sm">MongoDB BSON Document Representation</span>
-              <span className="text-slate-500 text-[11px]">Collection: `orders`</span>
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+              <span className="text-amber-400 font-bold text-sm">MongoDB BSON Document Representation</span>
+              <span className="text-zinc-500 text-[11px]">Collection: `orders`</span>
             </div>
-            <p className="text-slate-300 text-xs">
+            <p className="text-zinc-300 text-xs leading-relaxed">
               Orders, nested items, and shipping addresses are embedded in a single polymorphic document. Zero foreign key joins required!
             </p>
-            <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-emerald-300 leading-relaxed overflow-x-auto">
+            <pre className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 text-amber-300 leading-relaxed overflow-x-auto">
 {`db.orders.insertOne({
   _id: ObjectId("65dfa82910fa"),
   order_number: "ORD-9821",
@@ -83,14 +74,14 @@ export default function NoSqlWorkbench() {
 
         {modelType === 'keyvalue' && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-red-400 font-bold text-sm">Redis In-Memory Key-Value & Hashes</span>
-              <span className="text-slate-500 text-[11px]">Time Complexity: O(1)</span>
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+              <span className="text-amber-400 font-bold text-sm">Redis In-Memory Key-Value & Hashes</span>
+              <span className="text-zinc-500 text-[11px]">Time Complexity: O(1)</span>
             </div>
-            <p className="text-slate-300 text-xs">
+            <p className="text-zinc-300 text-xs leading-relaxed">
               Sub-millisecond access via direct memory keys and hashes. Perfect for shopping carts, user sessions, and cache buffers.
             </p>
-            <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-red-300 leading-relaxed overflow-x-auto">
+            <pre className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 text-zinc-200 leading-relaxed overflow-x-auto">
 {`# 1. Store order hash
 HSET order:9821 customer_id 101 amount 114900 status "DELIVERED"
 
@@ -105,14 +96,14 @@ SETEX user:101:last_review 86400 "Blazing fast, 18-hour battery life!"`}
 
         {modelType === 'graph' && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-blue-400 font-bold text-sm">Neo4j Cypher Property Graph</span>
-              <span className="text-slate-500 text-[11px]">Nodes & Labeled Directed Edges</span>
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+              <span className="text-amber-400 font-bold text-sm">Neo4j Cypher Property Graph</span>
+              <span className="text-zinc-500 text-[11px]">Nodes & Labeled Directed Edges</span>
             </div>
-            <p className="text-slate-300 text-xs">
+            <p className="text-zinc-300 text-xs leading-relaxed">
               Models relationships as first-class citizens. Enables index-free adjacency for friend networks and recommendation graphs.
             </p>
-            <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-blue-300 leading-relaxed overflow-x-auto">
+            <pre className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 text-amber-300 leading-relaxed overflow-x-auto">
 {`CREATE (u:User {name: "Aarav Sharma", id: 101})
 CREATE (p:Product {name: "MacBook Air M3", price: 114900})
 CREATE (o:Order {order_id: "ORD-9821"})
@@ -131,14 +122,14 @@ RETURN otherOrder;`}
 
         {modelType === 'widecolumn' && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-cyan-400 font-bold text-sm">Apache Cassandra CQL Wide-Column Table</span>
-              <span className="text-slate-500 text-[11px]">Partition Key + Clustering Column</span>
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+              <span className="text-amber-400 font-bold text-sm">Apache Cassandra CQL Wide-Column Table</span>
+              <span className="text-zinc-500 text-[11px]">Partition Key + Clustering Column</span>
             </div>
-            <p className="text-slate-300 text-xs">
+            <p className="text-zinc-300 text-xs leading-relaxed">
               Designed for petabyte-scale write throughput across hundreds of distributed server nodes with zero downtime.
             </p>
-            <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-cyan-300 leading-relaxed overflow-x-auto">
+            <pre className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 text-zinc-200 leading-relaxed overflow-x-auto">
 {`CREATE TABLE orders_by_customer (
   customer_id int,
   order_id text,

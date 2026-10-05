@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Binary, Play, ArrowRight, Code2 } from 'lucide-react';
 
 export default function RelationalAlgebraPlayground() {
-  const [operator, setOperator] = useState('select'); // select, project, join, cartesian, union
+  const [operator, setOperator] = useState('select'); // select, project, join, cartesian
   const [condition, setCondition] = useState('branch = "CSE"');
   const [projectionCols, setProjectionCols] = useState('name, marks');
 
@@ -88,117 +88,81 @@ export default function RelationalAlgebraPlayground() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-        <div className="flex items-center gap-2 text-blue-400 font-bold text-lg mb-1">
-          <Binary className="w-5 h-5" />
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+        <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
+          <Binary className="w-5 h-5 text-amber-400" />
           <span>Interactive Relational Algebra Playground</span>
         </div>
-        <p className="text-slate-300 text-sm">
+        <p className="text-zinc-300 text-sm">
           Edgar F. Codd formulated Relational Algebra using Set Theory in 1970. Toggle operators below to see how mathematical set operations map directly into declarative SQL queries!
         </p>
 
         {/* Operator selection buttons */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          <button
-            onClick={() => setOperator('select')}
-            className={`px-3 py-1.5 text-xs rounded-lg font-mono transition ${
-              operator === 'select'
-                ? 'bg-blue-600 text-white font-bold shadow-md'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-            }`}
-          >
-            Selection (σ)
-          </button>
-          <button
-            onClick={() => setOperator('project')}
-            className={`px-3 py-1.5 text-xs rounded-lg font-mono transition ${
-              operator === 'project'
-                ? 'bg-blue-600 text-white font-bold shadow-md'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-            }`}
-          >
-            Projection (π)
-          </button>
-          <button
-            onClick={() => setOperator('join')}
-            className={`px-3 py-1.5 text-xs rounded-lg font-mono transition ${
-              operator === 'join'
-                ? 'bg-blue-600 text-white font-bold shadow-md'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-            }`}
-          >
-            Natural Join (⋈)
-          </button>
-          <button
-            onClick={() => setOperator('cartesian')}
-            className={`px-3 py-1.5 text-xs rounded-lg font-mono transition ${
-              operator === 'cartesian'
-                ? 'bg-blue-600 text-white font-bold shadow-md'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-            }`}
-          >
-            Cartesian Product (×)
-          </button>
+        <div className="flex flex-wrap gap-2 mt-5">
+          {[
+            { id: 'select', label: 'Selection (σ)' },
+            { id: 'project', label: 'Projection (π)' },
+            { id: 'join', label: 'Natural Join (⋈)' },
+            { id: 'cartesian', label: 'Cartesian Product (×)' }
+          ].map(op => (
+            <button
+              key={op.id}
+              onClick={() => setOperator(op.id)}
+              className={`px-4 py-2 text-xs rounded-xl font-mono transition ${
+                operator === op.id
+                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black font-extrabold shadow-lg shadow-amber-500/20'
+                  : 'bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
+              }`}
+            >
+              {op.label}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Operator controls */}
       {operator === 'select' && (
-        <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl flex flex-wrap items-center gap-3">
-          <span className="text-xs text-slate-400 font-mono">Selection Predicate (σ):</span>
-          <button
-            onClick={() => setCondition('branch = "CSE"')}
-            className={`px-2.5 py-1 text-xs rounded border transition ${
-              condition === 'branch = "CSE"' ? 'bg-blue-950 border-blue-500 text-blue-300' : 'bg-slate-800 border-slate-700 text-slate-300'
-            }`}
-          >
-            branch = 'CSE'
-          </button>
-          <button
-            onClick={() => setCondition('branch = "ECE"')}
-            className={`px-2.5 py-1 text-xs rounded border transition ${
-              condition === 'branch = "ECE"' ? 'bg-blue-950 border-blue-500 text-blue-300' : 'bg-slate-800 border-slate-700 text-slate-300'
-            }`}
-          >
-            branch = 'ECE'
-          </button>
-          <button
-            onClick={() => setCondition('marks > 85')}
-            className={`px-2.5 py-1 text-xs rounded border transition ${
-              condition === 'marks > 85' ? 'bg-blue-950 border-blue-500 text-blue-300' : 'bg-slate-800 border-slate-700 text-slate-300'
-            }`}
-          >
-            marks &gt; 85
-          </button>
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex flex-wrap items-center gap-3 shadow-lg">
+          <span className="text-xs text-zinc-400 font-mono">Selection Predicate (σ):</span>
+          {['branch = "CSE"', 'branch = "ECE"', 'marks > 85'].map(cond => (
+            <button
+              key={cond}
+              onClick={() => setCondition(cond)}
+              className={`px-3 py-1.5 text-xs rounded-lg border font-mono transition ${
+                condition === cond
+                  ? 'bg-amber-950/60 border-amber-500 text-amber-300 font-bold'
+                  : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white'
+              }`}
+            >
+              {cond}
+            </button>
+          ))}
         </div>
       )}
 
       {operator === 'project' && (
-        <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl flex flex-wrap items-center gap-3">
-          <span className="text-xs text-slate-400 font-mono">Projection Columns (π):</span>
-          <button
-            onClick={() => setProjectionCols('name, marks')}
-            className={`px-2.5 py-1 text-xs rounded border transition ${
-              projectionCols === 'name, marks' ? 'bg-blue-950 border-blue-500 text-blue-300' : 'bg-slate-800 border-slate-700 text-slate-300'
-            }`}
-          >
-            name, marks
-          </button>
-          <button
-            onClick={() => setProjectionCols('id, name, branch')}
-            className={`px-2.5 py-1 text-xs rounded border transition ${
-              projectionCols === 'id, name, branch' ? 'bg-blue-950 border-blue-500 text-blue-300' : 'bg-slate-800 border-slate-700 text-slate-300'
-            }`}
-          >
-            id, name, branch
-          </button>
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex flex-wrap items-center gap-3 shadow-lg">
+          <span className="text-xs text-zinc-400 font-mono">Projection Columns (π):</span>
+          {['name, marks', 'id, name, branch'].map(cols => (
+            <button
+              key={cols}
+              onClick={() => setProjectionCols(cols)}
+              className={`px-3 py-1.5 text-xs rounded-lg border font-mono transition ${
+                projectionCols === cols
+                  ? 'bg-amber-950/60 border-amber-500 text-amber-300 font-bold'
+                  : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white'
+              }`}
+            >
+              {cols}
+            </button>
+          ))}
         </div>
       )}
 
       {/* Formula & SQL mapping */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-slate-950 p-4 rounded-xl border border-blue-500/30">
-          <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider block mb-1">
+        <div className="bg-zinc-950 p-5 rounded-2xl border border-amber-500/30 shadow-lg">
+          <span className="text-xs text-amber-400 font-semibold uppercase tracking-wider block mb-2">
             Mathematical Relational Algebra
           </span>
           <div className="text-lg font-mono text-white font-bold">
@@ -206,37 +170,37 @@ export default function RelationalAlgebraPlayground() {
           </div>
         </div>
 
-        <div className="bg-slate-950 p-4 rounded-xl border border-emerald-500/30">
-          <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider block mb-1 flex items-center gap-1">
-            <Code2 className="w-3.5 h-3.5" />
+        <div className="bg-zinc-950 p-5 rounded-2xl border border-zinc-800 shadow-lg">
+          <span className="text-xs text-zinc-400 font-semibold uppercase tracking-wider block mb-2 flex items-center gap-1.5">
+            <Code2 className="w-4 h-4 text-amber-400" />
             Synthesized ANSI SQL Statement
           </span>
-          <pre className="text-xs font-mono text-emerald-300 whitespace-pre-wrap">
+          <pre className="text-xs font-mono text-amber-300 whitespace-pre-wrap">
             {getEquivalentSql()}
           </pre>
         </div>
       </div>
 
       {/* Result relation display */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
-        <div className="p-3 bg-slate-950/60 border-b border-slate-800 text-xs font-mono text-slate-300 flex items-center justify-between">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
+        <div className="p-3.5 bg-zinc-950 border-b border-zinc-800 text-xs font-mono text-zinc-300 flex items-center justify-between">
           <span>Transformed Relation Output ({resultRows.length} tuples)</span>
-          <span className="text-emerald-400">Status: Evaluated in memory</span>
+          <span className="text-amber-400 font-semibold">Status: Evaluated in memory</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-800/60 text-slate-300 border-b border-slate-700">
+            <thead className="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
               <tr>
                 {resultRows.length > 0 && Object.keys(resultRows[0]).map(col => (
                   <th key={col} className="p-3">{col}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-zinc-800">
               {resultRows.map((row, i) => (
-                <tr key={i} className="hover:bg-slate-800/40 transition">
+                <tr key={i} className="hover:bg-zinc-800/40 transition">
                   {Object.values(row).map((val, idx) => (
-                    <td key={idx} className="p-3 text-slate-200">{String(val)}</td>
+                    <td key={idx} className="p-3 text-zinc-200">{String(val)}</td>
                   ))}
                 </tr>
               ))}

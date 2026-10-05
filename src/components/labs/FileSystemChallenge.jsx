@@ -108,21 +108,21 @@ export default function FileSystemChallenge({ onComplete }) {
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="bg-gradient-to-r from-amber-950/60 via-slate-900 to-slate-950 border border-amber-500/30 rounded-xl p-5 shadow-lg">
+      <div className="bg-gradient-to-r from-black via-zinc-950 to-zinc-900 border border-amber-500/40 rounded-xl p-5 shadow-xl">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
-              <Flame className="w-5 h-5" />
+              <Flame className="w-5 h-5 text-amber-400" />
               <span>Signature Experience: "The File System Challenge"</span>
             </div>
-            <p className="text-slate-300 text-sm max-w-2xl">
+            <p className="text-zinc-300 text-sm max-w-2xl">
               Experience the historical crisis that forced computer scientists to invent DBMS! You manage 4 independent flat files.
               Trigger real-world anomalies below and observe how the file system architecture catastrophically breaks down.
             </p>
           </div>
           <button
             onClick={resetAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-black hover:bg-zinc-900 text-zinc-300 rounded-lg border border-zinc-800 transition"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reset Files
@@ -134,76 +134,76 @@ export default function FileSystemChallenge({ onComplete }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <button
           onClick={triggerRedundancy}
-          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between ${
+          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between shadow-md ${
             anomalyTriggered === 'redundancy'
-              ? 'bg-amber-950/50 border-amber-500 text-amber-200'
-              : 'bg-slate-900/60 border-slate-800 hover:border-amber-500/50 text-slate-300'
+              ? 'bg-black border-amber-500 text-amber-300 shadow-amber-500/10'
+              : 'bg-zinc-950 border-zinc-800 hover:border-amber-500/50 text-zinc-300'
           }`}
         >
           <div className="flex items-center gap-2 mb-2">
             <Users className="w-4 h-4 text-amber-400" />
             <span className="font-semibold text-sm">1. Data Duplication</span>
           </div>
-          <span className="text-xs text-slate-400">Notice student names and IDs copied in 4 separate files.</span>
+          <span className="text-xs text-zinc-400">Notice student names and IDs copied in 4 separate files.</span>
         </button>
 
         <button
           onClick={triggerInconsistency}
-          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between ${
+          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between shadow-md ${
             anomalyTriggered === 'inconsistency'
               ? 'bg-red-950/50 border-red-500 text-red-200'
-              : 'bg-slate-900/60 border-slate-800 hover:border-red-500/50 text-slate-300'
+              : 'bg-zinc-950 border-zinc-800 hover:border-red-500/50 text-zinc-300'
           }`}
         >
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="w-4 h-4 text-red-400" />
             <span className="font-semibold text-sm">2. Data Inconsistency</span>
           </div>
-          <span className="text-xs text-slate-400">Update marks without updating fees or profile.</span>
+          <span className="text-xs text-zinc-400">Update marks without updating fees or profile.</span>
         </button>
 
         <button
           onClick={triggerRaceCondition}
-          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between ${
+          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between shadow-md ${
             anomalyTriggered === 'concurrency'
-              ? 'bg-purple-950/50 border-purple-500 text-purple-200'
-              : 'bg-slate-900/60 border-slate-800 hover:border-purple-500/50 text-slate-300'
+              ? 'bg-black border-amber-500 text-amber-300'
+              : 'bg-zinc-950 border-zinc-800 hover:border-amber-500/40 text-zinc-300'
           }`}
         >
           <div className="flex items-center gap-2 mb-2">
-            <Flame className="w-4 h-4 text-purple-400" />
+            <Flame className="w-4 h-4 text-amber-400" />
             <span className="font-semibold text-sm">3. Concurrent Crash</span>
           </div>
-          <span className="text-xs text-slate-400">Simulate two users saving attendance simultaneously.</span>
+          <span className="text-xs text-zinc-400">Simulate two users saving attendance simultaneously.</span>
         </button>
 
         <button
           onClick={triggerSecurityLeak}
-          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between ${
+          className={`p-4 rounded-xl border text-left transition flex flex-col justify-between shadow-md ${
             anomalyTriggered === 'security'
-              ? 'bg-blue-950/50 border-blue-500 text-blue-200'
-              : 'bg-slate-900/60 border-slate-800 hover:border-blue-500/50 text-slate-300'
+              ? 'bg-zinc-900 border-zinc-600 text-zinc-200'
+              : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700 text-zinc-300'
           }`}
         >
           <div className="flex items-center gap-2 mb-2">
-            <ShieldAlert className="w-4 h-4 text-blue-400" />
+            <ShieldAlert className="w-4 h-4 text-zinc-200" />
             <span className="font-semibold text-sm">4. Security Exposure</span>
           </div>
-          <span className="text-xs text-slate-400">Expose raw unencrypted financial & academic records.</span>
+          <span className="text-xs text-zinc-400">Expose raw unencrypted financial & academic records.</span>
         </button>
       </div>
 
       {/* File Viewer Simulator */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+        <div className="lg:col-span-2 bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl">
           {/* File tabs */}
-          <div className="flex items-center border-b border-slate-800 bg-slate-950/80 px-2 pt-2 gap-1">
+          <div className="flex items-center border-b border-zinc-800 bg-black px-2 pt-2 gap-1">
             <button
               onClick={() => setActiveTab('students')}
               className={`flex items-center gap-2 px-3 py-2 text-xs font-mono rounded-t-lg transition border-t border-x ${
                 activeTab === 'students'
-                  ? 'bg-slate-900 text-blue-400 border-slate-700'
-                  : 'text-slate-400 border-transparent hover:text-slate-200'
+                  ? 'bg-zinc-950 text-amber-400 border-zinc-800'
+                  : 'text-zinc-400 border-transparent hover:text-white'
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
@@ -213,8 +213,8 @@ export default function FileSystemChallenge({ onComplete }) {
               onClick={() => setActiveTab('fees')}
               className={`flex items-center gap-2 px-3 py-2 text-xs font-mono rounded-t-lg transition border-t border-x ${
                 activeTab === 'fees'
-                  ? 'bg-slate-900 text-emerald-400 border-slate-700'
-                  : 'text-slate-400 border-transparent hover:text-slate-200'
+                  ? 'bg-zinc-950 text-amber-300 border-zinc-800'
+                  : 'text-zinc-400 border-transparent hover:text-white'
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
@@ -224,8 +224,8 @@ export default function FileSystemChallenge({ onComplete }) {
               onClick={() => setActiveTab('attendance')}
               className={`flex items-center gap-2 px-3 py-2 text-xs font-mono rounded-t-lg transition border-t border-x ${
                 activeTab === 'attendance'
-                  ? 'bg-slate-900 text-purple-400 border-slate-700'
-                  : 'text-slate-400 border-transparent hover:text-slate-200'
+                  ? 'bg-zinc-950 text-zinc-200 border-zinc-800'
+                  : 'text-zinc-400 border-transparent hover:text-white'
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
@@ -235,8 +235,8 @@ export default function FileSystemChallenge({ onComplete }) {
               onClick={() => setActiveTab('marks')}
               className={`flex items-center gap-2 px-3 py-2 text-xs font-mono rounded-t-lg transition border-t border-x ${
                 activeTab === 'marks'
-                  ? 'bg-slate-900 text-amber-400 border-slate-700'
-                  : 'text-slate-400 border-transparent hover:text-slate-200'
+                  ? 'bg-zinc-950 text-amber-400 border-zinc-800'
+                  : 'text-zinc-400 border-transparent hover:text-white'
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
@@ -245,12 +245,12 @@ export default function FileSystemChallenge({ onComplete }) {
           </div>
 
           {/* File Content Preview */}
-          <div className="p-4 bg-slate-950 font-mono text-xs text-slate-300 min-h-[220px] overflow-x-auto">
+          <div className="p-4 bg-black font-mono text-xs text-zinc-300 min-h-[220px] overflow-x-auto">
             {activeTab === 'students' && (
               <div className="space-y-1">
                 {studentsFile.map((line, idx) => (
-                  <div key={idx} className="hover:bg-slate-900/60 p-1 rounded transition">
-                    <span className="text-slate-600 mr-3 select-none">{idx + 1}</span>
+                  <div key={idx} className="hover:bg-zinc-900 p-1 rounded transition">
+                    <span className="text-zinc-600 mr-3 select-none">{idx + 1}</span>
                     {line}
                   </div>
                 ))}
@@ -259,9 +259,9 @@ export default function FileSystemChallenge({ onComplete }) {
             {activeTab === 'fees' && (
               <div className="space-y-1">
                 {feesFile.map((line, idx) => (
-                  <div key={idx} className="hover:bg-slate-900/60 p-1 rounded transition">
-                    <span className="text-slate-600 mr-3 select-none">{idx + 1}</span>
-                    <span className={idx === 0 ? 'text-emerald-400 font-bold' : ''}>{line}</span>
+                  <div key={idx} className="hover:bg-zinc-900 p-1 rounded transition">
+                    <span className="text-zinc-600 mr-3 select-none">{idx + 1}</span>
+                    <span className={idx === 0 ? 'text-amber-300 font-bold' : ''}>{line}</span>
                   </div>
                 ))}
               </div>
@@ -269,8 +269,8 @@ export default function FileSystemChallenge({ onComplete }) {
             {activeTab === 'attendance' && (
               <div className="space-y-1">
                 {attendanceFile.map((line, idx) => (
-                  <div key={idx} className="hover:bg-slate-900/60 p-1 rounded transition">
-                    <span className="text-slate-600 mr-3 select-none">{idx + 1}</span>
+                  <div key={idx} className="hover:bg-zinc-900 p-1 rounded transition">
+                    <span className="text-zinc-600 mr-3 select-none">{idx + 1}</span>
                     <span className={line.includes('CORRUPT') ? 'text-red-400 font-bold bg-red-950/60 p-0.5 rounded' : ''}>
                       {line}
                     </span>
@@ -281,8 +281,8 @@ export default function FileSystemChallenge({ onComplete }) {
             {activeTab === 'marks' && (
               <div className="space-y-1">
                 {marksFile.map((line, idx) => (
-                  <div key={idx} className="hover:bg-slate-900/60 p-1 rounded transition">
-                    <span className="text-slate-600 mr-3 select-none">{idx + 1}</span>
+                  <div key={idx} className="hover:bg-zinc-900 p-1 rounded transition">
+                    <span className="text-zinc-600 mr-3 select-none">{idx + 1}</span>
                     <span className={line.includes('Exam Dept') ? 'text-amber-400 font-bold bg-amber-950/60 p-0.5 rounded' : ''}>
                       {line}
                     </span>
@@ -295,34 +295,34 @@ export default function FileSystemChallenge({ onComplete }) {
 
         {/* Console Activity & Conclusion */}
         <div className="space-y-4">
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
-            <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2 flex items-center gap-1.5">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 shadow-md">
+            <h4 className="text-xs uppercase tracking-wider text-zinc-400 font-bold mb-2 flex items-center gap-1.5">
               <span>Operating System Event Stream</span>
             </h4>
             <div className="space-y-2 text-xs font-mono max-h-[160px] overflow-y-auto pr-1">
               {logs.map((log, i) => (
-                <div key={i} className="text-slate-400 border-l-2 border-slate-700 pl-2 py-0.5">
+                <div key={i} className="text-zinc-400 border-l-2 border-zinc-700 pl-2 py-0.5">
                   {log}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-blue-950/40 border border-blue-500/30 rounded-xl p-4">
-            <div className="flex items-center gap-2 text-blue-400 font-bold text-sm mb-1">
-              <Database className="w-4 h-4" />
+          <div className="bg-black border border-amber-500/40 rounded-xl p-4 shadow-xl">
+            <div className="flex items-center gap-2 text-amber-400 font-bold text-sm mb-1">
+              <Database className="w-4 h-4 text-amber-400" />
               <span>Why DBMS Was Invented</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Because of <strong>Redundancy, Inconsistency, Concurrency Collisions, and Security Voids</strong>, the relational DBMS was born:
+            <p className="text-xs text-zinc-300 leading-relaxed">
+              Because of <strong className="text-white">Redundancy, Inconsistency, Concurrency Collisions, and Security Voids</strong>, the relational DBMS was born:
               providing a single unified schema, ACID transactions, and declarative SQL!
             </p>
             {onComplete && (
               <button
                 onClick={onComplete}
-                className="mt-3 w-full py-2 px-3 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-lg transition flex items-center justify-center gap-1.5"
+                className="mt-3 w-full py-2.5 px-3 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 hover:brightness-110 text-black font-extrabold text-xs rounded-lg transition flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20"
               >
-                <CheckCircle2 className="w-4 h-4" />
+                <CheckCircle2 className="w-4 h-4 text-black" />
                 Complete Level 0 Signature Experience (+100 XP)
               </button>
             )}

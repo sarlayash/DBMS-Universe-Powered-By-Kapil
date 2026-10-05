@@ -15,8 +15,6 @@ export default function SecuritySandbox() {
 
   const executeAttack = () => {
     if (!isSecureMode) {
-      // Vulnerable string concatenation simulation:
-      // SELECT * FROM users WHERE username = '${userInput}'
       if (userInput.includes("' OR '1'='1") || userInput.includes("' OR 1=1")) {
         setAttackOutput({
           exploited: true,
@@ -31,10 +29,9 @@ export default function SecuritySandbox() {
         });
       }
     } else {
-      // Secure mode with parameterized query
       setAttackOutput({
         exploited: false,
-        message: '🛡️ ATTACK BLOCKED! Parameterized query sanitized input. Treated "\' OR \'1\'=\'1\' --" as literal string literal username. 0 records leaked.',
+        message: '🛡️ ATTACK BLOCKED! Parameterized query sanitized input. Treated "\' OR \'1\'=\'1\' --" as literal string username. 0 records leaked.',
         dumpedRows: []
       });
     }
@@ -43,55 +40,57 @@ export default function SecuritySandbox() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-        <div className="flex items-center justify-between">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-red-400 font-bold text-lg mb-1">
-              <ShieldAlert className="w-5 h-5" />
+            <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
+              <ShieldAlert className="w-5 h-5 text-amber-400" />
               <span>Level 13 Security Lab: SQL Injection Exploit & Defense Sandbox</span>
             </div>
-            <p className="text-slate-300 text-sm max-w-2xl">
+            <p className="text-zinc-300 text-sm max-w-2xl">
               Experience firsthand how a simple malicious string input completely hijacks an unescaped SQL query to dump confidential user tables.
               Then toggle on <strong>Parameterized Queries</strong> to see how prepared statements neutralize the exploit!
             </p>
           </div>
           <button
             onClick={() => { setIsSecureMode(!isSecureMode); setAttackOutput(null); }}
-            className={`px-3 py-1.5 text-xs font-mono font-bold rounded-lg border transition flex items-center gap-1.5 ${
+            className={`px-4 py-2 text-xs font-mono font-bold rounded-xl border transition flex items-center gap-2 shadow-md ${
               isSecureMode
-                ? 'bg-emerald-950 border-emerald-500 text-emerald-300'
-                : 'bg-red-950 border-red-500 text-red-300'
+                ? 'bg-amber-950/60 border-amber-500 text-amber-300'
+                : 'bg-red-950/60 border-red-500 text-red-300'
             }`}
           >
-            {isSecureMode ? <ShieldCheck className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
-            Mode: {isSecureMode ? 'SECURED (Parameterized)' : 'VULNERABLE (Concatenation)'}
+            {isSecureMode ? <ShieldCheck className="w-4 h-4 text-amber-400" /> : <AlertTriangle className="w-4 h-4 text-red-400" />}
+            Mode: {isSecureMode ? 'SECURED (Prepared)' : 'VULNERABLE (Concatenated)'}
           </button>
         </div>
       </div>
 
       {/* Terminal Attacker Console */}
-      <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-3">
-        <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-2">
-          <span className="flex items-center gap-1.5 text-slate-300">
-            <Terminal className="w-4 h-4 text-emerald-400" />
+      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 font-mono text-xs space-y-4 shadow-xl">
+        <div className="flex items-center justify-between text-zinc-400 border-b border-zinc-800 pb-3">
+          <span className="flex items-center gap-2 text-zinc-300">
+            <Terminal className="w-4 h-4 text-amber-400" />
             Hacker Penetration Testing Console
           </span>
-          <span className="text-[11px] text-slate-500">Target: /api/v1/login</span>
+          <span className="text-[11px] text-zinc-500">Target: /api/v1/login</span>
         </div>
 
         <div>
-          <label className="text-slate-400 block mb-1">Payload Input (username parameter):</label>
-          <div className="flex gap-2">
+          <label className="text-zinc-400 block mb-1.5">Payload Input (username parameter):</label>
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              className="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white font-mono"
+              className="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-amber-400 outline-none"
             />
             <button
               onClick={executeAttack}
-              className={`px-4 py-2 font-bold rounded text-white transition ${
-                isSecureMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-red-600 hover:bg-red-500'
+              className={`px-5 py-2.5 font-extrabold rounded-xl transition ${
+                isSecureMode
+                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 hover:from-amber-300 hover:to-yellow-500 text-black shadow-lg shadow-amber-500/20'
+                  : 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/30'
               }`}
             >
               Send Exploit Payload
@@ -100,16 +99,16 @@ export default function SecuritySandbox() {
         </div>
 
         {/* Generated Backend Query */}
-        <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
-          <span className="text-slate-500 block mb-1">Backend SQL Evaluated by Database Engine:</span>
+        <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 space-y-1">
+          <span className="text-zinc-500 block mb-1">Backend SQL Evaluated by Database Engine:</span>
           {isSecureMode ? (
-            <div className="text-emerald-400">
+            <div className="text-amber-400 font-mono">
               <code>PREPARE stmt FROM 'SELECT * FROM users WHERE username = ? AND password = ?';</code>
               <br />
               <code>EXECUTE stmt USING ('{userInput}', 'secret');</code>
             </div>
           ) : (
-            <div className="text-red-400">
+            <div className="text-red-400 font-mono">
               <code>SELECT * FROM users WHERE username = '{userInput}' AND password = 'password';</code>
             </div>
           )}
@@ -118,38 +117,38 @@ export default function SecuritySandbox() {
 
       {/* Attack Results */}
       {attackOutput && (
-        <div className={`p-4 rounded-xl border font-mono text-xs ${
+        <div className={`p-5 rounded-2xl border font-mono text-xs shadow-xl ${
           attackOutput.exploited
             ? 'bg-red-950/40 border-red-500/60'
-            : 'bg-emerald-950/40 border-emerald-500/60'
+            : 'bg-zinc-900 border-amber-500/60 text-amber-300'
         }`}>
           <div className={`font-bold text-sm mb-2 ${
-            attackOutput.exploited ? 'text-red-400' : 'text-emerald-400'
+            attackOutput.exploited ? 'text-red-400' : 'text-amber-400'
           }`}>
             {attackOutput.message}
           </div>
 
           {attackOutput.dumpedRows.length > 0 && (
             <div className="overflow-x-auto mt-3">
-              <span className="text-red-300 font-bold block mb-1">Confidential Database DUMP:</span>
+              <span className="text-red-300 font-bold block mb-2">Confidential Database DUMP:</span>
               <table className="w-full text-left">
-                <thead className="text-slate-400 border-b border-red-900/60">
+                <thead className="text-zinc-400 border-b border-red-900/60 bg-zinc-950">
                   <tr>
-                    <th className="p-2">id</th>
-                    <th className="p-2">username</th>
-                    <th className="p-2">password_hash</th>
-                    <th className="p-2">role</th>
-                    <th className="p-2">balance</th>
+                    <th className="p-2.5">id</th>
+                    <th className="p-2.5">username</th>
+                    <th className="p-2.5">password_hash</th>
+                    <th className="p-2.5">role</th>
+                    <th className="p-2.5">balance</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-red-900/30 text-red-200">
                   {attackOutput.dumpedRows.map(u => (
-                    <tr key={u.id}>
-                      <td className="p-2">{u.id}</td>
-                      <td className="p-2 font-bold">{u.username}</td>
-                      <td className="p-2">{u.password_hash}</td>
-                      <td className="p-2">{u.role}</td>
-                      <td className="p-2 font-bold">{u.balance}</td>
+                    <tr key={u.id} className="hover:bg-red-950/20">
+                      <td className="p-2.5">{u.id}</td>
+                      <td className="p-2.5 font-bold text-white">{u.username}</td>
+                      <td className="p-2.5 text-zinc-400">{u.password_hash}</td>
+                      <td className="p-2.5">{u.role}</td>
+                      <td className="p-2.5 font-bold text-amber-400">{u.balance}</td>
                     </tr>
                   ))}
                 </tbody>

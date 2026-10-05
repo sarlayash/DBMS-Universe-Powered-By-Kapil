@@ -110,35 +110,35 @@ export default function InterviewSimulator() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-        <div className="flex items-center justify-between">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-blue-400 font-bold text-lg mb-1">
-              <MessageSquareCheck className="w-5 h-5" />
+            <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
+              <MessageSquareCheck className="w-5 h-5 text-amber-400" />
               <span>Level 24: AI-Style Database Interview Simulator</span>
             </div>
-            <p className="text-slate-300 text-sm max-w-2xl">
+            <p className="text-zinc-300 text-sm max-w-2xl">
               7 rigorous technical interview rounds covering DBMS fundamentals, SQL writing, normalization, indexing, scaling, and disaster recovery.
             </p>
           </div>
-          <div className="text-right">
-            <span className="text-xs font-mono text-slate-400 block">Overall Interview Score</span>
-            <span className="text-xl font-bold font-mono text-emerald-400">{calculateOverall()}%</span>
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 text-center sm:text-right">
+            <span className="text-xs font-mono text-zinc-400 block mb-1">Overall Interview Score</span>
+            <span className="text-2xl font-extrabold font-mono text-amber-400">{calculateOverall()}%</span>
           </div>
         </div>
 
         {/* Round Tabs */}
-        <div className="flex flex-wrap gap-1.5 mt-4">
+        <div className="flex flex-wrap gap-2 mt-5">
           {INTERVIEW_ROUNDS.map((r, i) => (
             <button
               key={r.round}
               onClick={() => { setCurrentRoundIdx(i); setFeedback(null); setUserAnswer(''); }}
-              className={`px-3 py-1 text-xs font-mono rounded-lg transition font-semibold ${
+              className={`px-3 py-1.5 text-xs font-mono rounded-xl transition font-bold border ${
                 currentRoundIdx === i
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black border-amber-400 shadow-md shadow-amber-500/20 font-extrabold'
                   : roundScores[r.round] !== undefined
-                  ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  ? 'bg-zinc-950 text-amber-300 border-amber-500/50'
+                  : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
               }`}
             >
               R{r.round}: {r.round === 1 ? 'Fundamentals' : r.round === 2 ? 'SQL' : r.round === 3 ? 'Queries' : r.round === 4 ? 'Design' : r.round === 5 ? 'Perf' : r.round === 6 ? 'Scale' : 'DR'}
@@ -148,43 +148,43 @@ export default function InterviewSimulator() {
       </div>
 
       {/* Current Round Interactive Dialogue */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4 shadow-xl">
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
           <div>
-            <span className="text-xs font-mono text-blue-400 font-bold uppercase">{current.title}</span>
+            <span className="text-xs font-mono text-amber-400 font-bold uppercase">{current.title}</span>
             <h3 className="text-sm font-semibold text-white">Interviewer: {current.interviewer}</h3>
           </div>
-          <span className="text-xs font-mono bg-slate-800 text-slate-300 px-2 py-1 rounded">
+          <span className="text-xs font-mono bg-zinc-950 text-zinc-300 px-3 py-1 rounded-full border border-zinc-800">
             Round {current.round} of 7
           </span>
         </div>
 
         {/* Interviewer Question Prompt */}
-        <div className="bg-slate-950 p-4 rounded-xl border border-blue-500/30 text-sm text-slate-200 leading-relaxed font-mono">
-          <span className="text-blue-400 font-bold block mb-1">Interviewer Question:</span>
+        <div className="bg-zinc-950 p-4 rounded-xl border border-amber-500/30 text-sm text-zinc-200 leading-relaxed font-mono">
+          <span className="text-amber-400 font-bold block mb-1">Interviewer Question:</span>
           "{current.question}"
         </div>
 
         {/* Candidate Response Area */}
         <div className="space-y-2">
-          <label className="text-xs font-mono text-slate-400 block">Your Professional Response:</label>
+          <label className="text-xs font-mono text-zinc-400 block">Your Professional Response:</label>
           <textarea
             rows={4}
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
             placeholder="Type your explanation or query approach here..."
-            className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs font-mono text-white focus:border-blue-500 outline-none"
+            className="w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3.5 text-xs font-mono text-white focus:border-amber-400 outline-none leading-relaxed"
           />
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-[11px] text-slate-500 font-mono">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+            <span className="text-[11px] text-zinc-500 font-mono">
               Tip: Include technical keywords ({current.hint})
             </span>
             <button
               onClick={evaluateAnswer}
               disabled={!userAnswer.trim()}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-mono font-bold rounded-lg transition flex items-center gap-1.5"
+              className="px-5 py-2.5 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 hover:from-amber-300 hover:to-yellow-500 disabled:opacity-50 text-black text-xs font-mono font-extrabold rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
             >
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-3.5 h-3.5 text-black" />
               Submit Response to Interviewer
             </button>
           </div>
@@ -192,37 +192,37 @@ export default function InterviewSimulator() {
 
         {/* Real-time AI Evaluation Feedback */}
         {feedback && (
-          <div className={`p-4 rounded-xl border font-mono text-xs space-y-3 ${
-            feedback.passed ? 'bg-emerald-950/40 border-emerald-500/50' : 'bg-amber-950/40 border-amber-500/50'
+          <div className={`p-5 rounded-2xl border font-mono text-xs space-y-3 ${
+            feedback.passed ? 'bg-zinc-950 border-amber-500/60 shadow-lg' : 'bg-zinc-950 border-zinc-700 shadow-md'
           }`}>
             <div className="flex items-center justify-between">
-              <span className={`font-bold text-sm ${feedback.passed ? 'text-emerald-400' : 'text-amber-400'}`}>
+              <span className={`font-bold text-sm ${feedback.passed ? 'text-amber-400' : 'text-zinc-300'}`}>
                 {feedback.passed ? '✅ Strong Technical Response!' : '⚠️ Incomplete Explanation'} (Score: {feedback.score}%)
               </span>
               {currentRoundIdx < INTERVIEW_ROUNDS.length - 1 && (
                 <button
                   onClick={handleNextRound}
-                  className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold flex items-center gap-1"
+                  className="px-4 py-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black rounded-lg font-extrabold flex items-center gap-1 shadow-md shadow-amber-500/20"
                 >
-                  Next Round <ArrowRight className="w-3.5 h-3.5" />
+                  Next Round <ArrowRight className="w-3.5 h-3.5 text-black" />
                 </button>
               )}
             </div>
 
-            <div className="text-slate-300">
-              <span className="text-slate-400 block mb-1">Keywords Identified:</span>
-              <div className="flex flex-wrap gap-1">
+            <div className="text-zinc-300">
+              <span className="text-zinc-400 block mb-1">Keywords Identified:</span>
+              <div className="flex flex-wrap gap-1.5">
                 {feedback.matchedKeywords.map(k => (
-                  <span key={k} className="px-2 py-0.5 bg-emerald-900/60 text-emerald-200 rounded border border-emerald-700">
+                  <span key={k} className="px-2.5 py-0.5 bg-zinc-900 text-amber-300 rounded-lg border border-amber-500/40">
                     +{k}
                   </span>
                 ))}
               </div>
             </div>
 
-            <div className="bg-slate-900/80 p-3 rounded-lg border border-slate-800 text-[11px]">
-              <span className="text-blue-300 font-bold block mb-1">Model Ideal Answer:</span>
-              <p className="text-slate-300 leading-relaxed">{current.sampleGoodAnswer}</p>
+            <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-[11px]">
+              <span className="text-amber-400 font-bold block mb-1">Model Ideal Answer:</span>
+              <p className="text-zinc-300 leading-relaxed">{current.sampleGoodAnswer}</p>
             </div>
           </div>
         )}

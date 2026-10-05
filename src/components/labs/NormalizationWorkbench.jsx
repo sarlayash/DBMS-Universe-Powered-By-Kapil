@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, AlertTriangle, CheckCircle2, RefreshCw, ArrowRight, Layers } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, CheckCircle2, RefreshCw } from 'lucide-react';
 
 export default function NormalizationWorkbench() {
   const [currentStage, setCurrentStage] = useState('unnormalized'); // unnormalized, 1nf, 2nf, 3nf
@@ -52,68 +52,68 @@ export default function NormalizationWorkbench() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-        <div className="flex items-center justify-between">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-emerald-400 font-bold text-lg mb-1">
-              <ShieldCheck className="w-5 h-5" />
-              <span>Level 9 Signature: "Fix The Database" Challenge</span>
+            <div className="flex items-center gap-2 text-amber-400 font-bold text-lg mb-1">
+              <ShieldCheck className="w-5 h-5 text-amber-400" />
+              <span>Level 9: Schema Normalization Workbench & Anomaly Lab</span>
             </div>
-            <p className="text-slate-300 text-sm max-w-2xl">
+            <p className="text-zinc-300 text-sm max-w-2xl">
               An un-normalized table with multi-valued attributes and transitive dependencies causes 3 lethal anomalies:
               Insertion, Update, and Deletion anomalies. Step through normalization below to repair the schema!
             </p>
           </div>
           <button
             onClick={() => { setCurrentStage('unnormalized'); setActiveAnomaly(null); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-zinc-950 hover:bg-zinc-800 text-zinc-300 rounded-lg border border-zinc-700 transition"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
             Reset to Broken
           </button>
         </div>
 
         {/* Progress Pipeline */}
-        <div className="grid grid-cols-4 gap-2 mt-4 font-mono text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 font-mono text-xs">
           <button
             onClick={() => setCurrentStage('unnormalized')}
-            className={`p-2.5 rounded-lg border text-center transition ${
+            className={`p-2.5 rounded-xl border text-center transition ${
               currentStage === 'unnormalized'
-                ? 'bg-red-950/70 border-red-500 text-red-200 font-bold'
-                : 'bg-slate-950 border-slate-800 text-slate-400'
+                ? 'bg-red-950/60 border-red-500 text-red-200 font-bold shadow-lg shadow-red-950/40'
+                : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
             }`}
           >
             0. Broken (Anomalous)
           </button>
           <button
             onClick={() => setCurrentStage('1nf')}
-            className={`p-2.5 rounded-lg border text-center transition ${
+            className={`p-2.5 rounded-xl border text-center transition ${
               currentStage === '1nf'
-                ? 'bg-amber-950/70 border-amber-500 text-amber-200 font-bold'
-                : 'bg-slate-950 border-slate-800 text-slate-400'
+                ? 'bg-amber-950/60 border-amber-500 text-amber-200 font-bold shadow-lg shadow-amber-950/40'
+                : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
             }`}
           >
             1. Apply 1NF (Atomic)
           </button>
           <button
             onClick={() => setCurrentStage('2nf')}
-            className={`p-2.5 rounded-lg border text-center transition ${
+            className={`p-2.5 rounded-xl border text-center transition ${
               currentStage === '2nf'
-                ? 'bg-blue-950/70 border-blue-500 text-blue-200 font-bold'
-                : 'bg-slate-950 border-slate-800 text-slate-400'
+                ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 text-black font-extrabold shadow-lg shadow-amber-500/20'
+                : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
             }`}
           >
             2. Apply 2NF (No Partial)
           </button>
           <button
             onClick={() => setCurrentStage('3nf')}
-            className={`p-2.5 rounded-lg border text-center transition ${
+            className={`p-2.5 rounded-xl border text-center transition ${
               currentStage === '3nf'
-                ? 'bg-emerald-950/70 border-emerald-500 text-emerald-200 font-bold'
-                : 'bg-slate-950 border-slate-800 text-slate-400'
+                ? 'bg-zinc-800 border-amber-400 text-amber-300 font-bold shadow-lg shadow-amber-500/20'
+                : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
             }`}
           >
-            3. Apply 3NF (Industry Ready)
+            3. Apply 3NF (Clean Schema)
           </button>
         </div>
       </div>
@@ -123,45 +123,45 @@ export default function NormalizationWorkbench() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <button
             onClick={() => setActiveAnomaly('insert')}
-            className={`p-3.5 rounded-xl border text-left transition ${
-              activeAnomaly === 'insert' ? 'bg-red-950 border-red-500 text-red-200' : 'bg-slate-900/60 border-slate-800 text-slate-300'
+            className={`p-4 rounded-xl border text-left transition ${
+              activeAnomaly === 'insert' ? 'bg-red-950/70 border-red-500 text-red-200' : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
             }`}
           >
             <div className="flex items-center gap-2 font-bold text-xs text-red-400 mb-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>Insertion Anomaly</span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-zinc-400 leading-relaxed">
               Cannot insert a new Department without enrolling an artificial dummy student first!
             </p>
           </button>
 
           <button
             onClick={() => setActiveAnomaly('update')}
-            className={`p-3.5 rounded-xl border text-left transition ${
-              activeAnomaly === 'update' ? 'bg-amber-950 border-amber-500 text-amber-200' : 'bg-slate-900/60 border-slate-800 text-slate-300'
+            className={`p-4 rounded-xl border text-left transition ${
+              activeAnomaly === 'update' ? 'bg-amber-950/70 border-amber-500 text-amber-200' : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
             }`}
           >
             <div className="flex items-center gap-2 font-bold text-xs text-amber-400 mb-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>Update Anomaly</span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-zinc-400 leading-relaxed">
               Updating CSE HOD requires updating 50,000 student rows; forgetting 1 row causes inconsistency!
             </p>
           </button>
 
           <button
             onClick={() => setActiveAnomaly('delete')}
-            className={`p-3.5 rounded-xl border text-left transition ${
-              activeAnomaly === 'delete' ? 'bg-purple-950 border-purple-500 text-purple-200' : 'bg-slate-900/60 border-slate-800 text-slate-300'
+            className={`p-4 rounded-xl border text-left transition ${
+              activeAnomaly === 'delete' ? 'bg-zinc-900 border-amber-400 text-amber-200' : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
             }`}
           >
-            <div className="flex items-center gap-2 font-bold text-xs text-purple-400 mb-1">
+            <div className="flex items-center gap-2 font-bold text-xs text-amber-400 mb-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>Deletion Anomaly</span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-zinc-400 leading-relaxed">
               Deleting student Priya inadvertently wipes out all institutional record of the ECE department!
             </p>
           </button>
@@ -170,14 +170,14 @@ export default function NormalizationWorkbench() {
 
       {/* Stage Table Views */}
       {currentStage === 'unnormalized' && (
-        <div className="bg-slate-900 border border-red-900/50 rounded-xl overflow-hidden">
-          <div className="p-3 bg-red-950/40 border-b border-red-900/50 flex items-center justify-between text-xs font-mono">
+        <div className="bg-zinc-900 border border-red-900/50 rounded-2xl overflow-hidden shadow-xl">
+          <div className="p-3.5 bg-red-950/40 border-b border-red-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-mono">
             <span className="text-red-400 font-bold">Unnormalized Broken Table (Violates 1NF, 2NF, 3NF)</span>
             <span className="text-red-300">Non-atomic attribute: courses has comma-separated list!</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-slate-800/60 text-slate-400 border-b border-slate-700">
+              <thead className="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
                 <tr>
                   <th className="p-3">student_id</th>
                   <th className="p-3">name</th>
@@ -187,15 +187,15 @@ export default function NormalizationWorkbench() {
                   <th className="p-3">dept_budget</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-slate-300">
+              <tbody className="divide-y divide-zinc-800 text-zinc-300">
                 {unnormalizedData.map((row, i) => (
-                  <tr key={i} className="hover:bg-slate-800/40">
-                    <td className="p-3 font-bold">{row.student_id}</td>
+                  <tr key={i} className="hover:bg-zinc-800/40 transition">
+                    <td className="p-3 font-bold text-white">{row.student_id}</td>
                     <td className="p-3">{row.name}</td>
                     <td className="p-3 text-red-300 bg-red-950/20">{row.courses}</td>
                     <td className="p-3">{row.dept}</td>
                     <td className="p-3 text-amber-300 bg-amber-950/20">{row.dept_head}</td>
-                    <td className="p-3">{row.dept_budget}</td>
+                    <td className="p-3 text-zinc-400">{row.dept_budget}</td>
                   </tr>
                 ))}
               </tbody>
@@ -205,14 +205,14 @@ export default function NormalizationWorkbench() {
       )}
 
       {currentStage === '1nf' && (
-        <div className="bg-slate-900 border border-amber-900/50 rounded-xl overflow-hidden">
-          <div className="p-3 bg-amber-950/40 border-b border-amber-900/50 text-xs font-mono text-amber-300">
+        <div className="bg-zinc-900 border border-amber-900/50 rounded-2xl overflow-hidden shadow-xl">
+          <div className="p-3.5 bg-amber-950/40 border-b border-amber-900/50 text-xs font-mono text-amber-300">
             <strong>1NF Applied:</strong> Every column is now atomic. Composite Primary Key is (student_id, course_id).
-            <span className="block text-slate-400 text-[11px] mt-0.5">Problem remaining: name depends only on student_id (Partial Dependency!).</span>
+            <span className="block text-zinc-400 text-[11px] mt-0.5">Problem remaining: name depends only on student_id (Partial Dependency!).</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-slate-800/60 text-slate-400 border-b border-slate-700">
+              <thead className="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
                 <tr>
                   <th className="p-3 text-amber-400 font-bold">student_id (PK part 1)</th>
                   <th className="p-3">name</th>
@@ -223,16 +223,16 @@ export default function NormalizationWorkbench() {
                   <th className="p-3">dept_head</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-slate-300">
+              <tbody className="divide-y divide-zinc-800 text-zinc-300">
                 {data1NF.map((row, i) => (
-                  <tr key={i} className="hover:bg-slate-800/40">
+                  <tr key={i} className="hover:bg-zinc-800/40 transition">
                     <td className="p-3 text-amber-300 font-bold">{row.student_id}</td>
-                    <td className="p-3">{row.name}</td>
+                    <td className="p-3 text-white">{row.name}</td>
                     <td className="p-3 text-amber-300 font-bold">{row.course_id}</td>
                     <td className="p-3">{row.course_name}</td>
                     <td className="p-3">{row.instructor}</td>
                     <td className="p-3">{row.dept}</td>
-                    <td className="p-3">{row.dept_head}</td>
+                    <td className="p-3 text-zinc-400">{row.dept_head}</td>
                   </tr>
                 ))}
               </tbody>
@@ -243,32 +243,32 @@ export default function NormalizationWorkbench() {
 
       {currentStage === '2nf' && (
         <div className="space-y-4">
-          <div className="p-3 bg-blue-950/40 border border-blue-800/50 rounded-xl text-xs font-mono text-blue-300">
+          <div className="p-3.5 bg-zinc-900 border border-amber-500/40 rounded-xl text-xs font-mono text-amber-300">
             <strong>2NF Applied:</strong> Decomposed into 3 tables to eliminate Partial Dependencies!
-            <span className="block text-slate-400 text-[11px] mt-0.5">Remaining issue: in students table, dept_head depends on dept (Transitive Dependency!).</span>
+            <span className="block text-zinc-400 text-[11px] mt-0.5">Remaining issue: in students table, dept_head depends on dept (Transitive Dependency!).</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-3">
-              <span className="font-bold text-blue-400 block mb-2">TABLE: students (PK: student_id)</span>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-lg">
+              <span className="font-bold text-amber-400 block mb-2">TABLE: students (PK: student_id)</span>
               {table2NF_Students.map(s => (
-                <div key={s.student_id} className="py-1 border-b border-slate-800/60 text-slate-300">
-                  {s.student_id}: {s.name} ({s.dept})
+                <div key={s.student_id} className="py-1 border-b border-zinc-800 text-zinc-300">
+                  {s.student_id}: <span className="text-white font-medium">{s.name}</span> ({s.dept})
                 </div>
               ))}
             </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-3">
-              <span className="font-bold text-emerald-400 block mb-2">TABLE: courses (PK: course_id)</span>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-lg">
+              <span className="font-bold text-zinc-200 block mb-2">TABLE: courses (PK: course_id)</span>
               {table2NF_Courses.map(c => (
-                <div key={c.course_id} className="py-1 border-b border-slate-800/60 text-slate-300">
-                  {c.course_id}: {c.course_name}
+                <div key={c.course_id} className="py-1 border-b border-zinc-800 text-zinc-300">
+                  <span className="text-amber-400">{c.course_id}</span>: {c.course_name}
                 </div>
               ))}
             </div>
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-3">
-              <span className="font-bold text-purple-400 block mb-2">TABLE: enrollments (Composite PK)</span>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-lg">
+              <span className="font-bold text-amber-300 block mb-2">TABLE: enrollments (Composite PK)</span>
               {table2NF_Enrollments.map((e, idx) => (
-                <div key={idx} className="py-1 border-b border-slate-800/60 text-slate-300">
-                  Student {e.student_id} &rarr; Course {e.course_id}
+                <div key={idx} className="py-1 border-b border-zinc-800 text-zinc-300">
+                  Student {e.student_id} &rarr; Course <span className="text-amber-400 font-bold">{e.course_id}</span>
                 </div>
               ))}
             </div>
@@ -278,46 +278,46 @@ export default function NormalizationWorkbench() {
 
       {currentStage === '3nf' && (
         <div className="space-y-4">
-          <div className="p-4 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-xs font-mono text-emerald-300">
-            <div className="flex items-center gap-2 font-bold text-sm mb-1">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <div className="p-4 bg-zinc-900 border border-amber-500/50 rounded-xl text-xs font-mono text-amber-300">
+            <div className="flex items-center gap-2 font-bold text-sm mb-1 text-amber-400">
+              <CheckCircle2 className="w-4 h-4 text-amber-400" />
               <span>3NF Fully Achieved! All Anomalies Completely Eradicated</span>
             </div>
             Transitive dependency removed. The schema now satisfies 1NF, 2NF, and 3NF/BCNF.
             Inserting a new department without students is now valid. Updating HOD is an O(1) single-row update.
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <span className="font-bold text-blue-400 block mb-2">TABLE: students (Clean 3NF)</span>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-lg">
+              <span className="font-bold text-amber-400 block mb-2">TABLE: students (Clean 3NF)</span>
               <table className="w-full text-left">
-                <thead className="text-slate-500 border-b border-slate-800">
-                  <tr><th>student_id (PK)</th><th>name</th><th>dept_id (FK)</th></tr>
+                <thead className="text-zinc-500 border-b border-zinc-800">
+                  <tr><th className="py-1">student_id (PK)</th><th className="py-1">name</th><th className="py-1">dept_id (FK)</th></tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-zinc-800 text-zinc-300">
                   {table3NF_Students.map(s => (
                     <tr key={s.student_id}>
-                      <td className="py-1.5">{s.student_id}</td>
-                      <td className="py-1.5">{s.name}</td>
-                      <td className="py-1.5 font-bold text-blue-400">{s.dept_id}</td>
+                      <td className="py-1.5 text-zinc-400">{s.student_id}</td>
+                      <td className="py-1.5 text-white font-medium">{s.name}</td>
+                      <td className="py-1.5 font-bold text-amber-400">{s.dept_id}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <span className="font-bold text-emerald-400 block mb-2">TABLE: departments (Decomposed Entity)</span>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-lg">
+              <span className="font-bold text-zinc-200 block mb-2">TABLE: departments (Decomposed Entity)</span>
               <table className="w-full text-left">
-                <thead className="text-slate-500 border-b border-slate-800">
-                  <tr><th>dept_id (PK)</th><th>dept_name</th><th>dept_head</th><th>budget</th></tr>
+                <thead className="text-zinc-500 border-b border-zinc-800">
+                  <tr><th className="py-1">dept_id (PK)</th><th className="py-1">dept_name</th><th className="py-1">dept_head</th><th className="py-1">budget</th></tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-zinc-800 text-zinc-300">
                   {table3NF_Departments.map(d => (
                     <tr key={d.dept_id}>
-                      <td className="py-1.5 font-bold text-emerald-400">{d.dept_id}</td>
-                      <td className="py-1.5">{d.dept_name}</td>
-                      <td className="py-1.5">{d.dept_head}</td>
-                      <td className="py-1.5">{d.budget}</td>
+                      <td className="py-1.5 font-bold text-amber-400">{d.dept_id}</td>
+                      <td className="py-1.5 text-white font-medium">{d.dept_name}</td>
+                      <td className="py-1.5 text-zinc-300">{d.dept_head}</td>
+                      <td className="py-1.5 text-zinc-400">{d.budget}</td>
                     </tr>
                   ))}
                 </tbody>
