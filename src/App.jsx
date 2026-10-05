@@ -21,11 +21,14 @@ import {
   CheckCircle2,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  Network,
+  LogOut
 } from 'lucide-react';
 
 import { ROADMAP_LEVELS } from './data/dbRoadmap';
 import { sqlEngine } from './services/sqlEngine';
+import { logoutUser } from './services/firebase';
 
 // Components
 import BrowserIDE from './components/BrowserIDE';
@@ -44,6 +47,7 @@ import FileSystemChallenge from './components/labs/FileSystemChallenge';
 import RelationalAlgebraPlayground from './components/labs/RelationalAlgebraPlayground';
 import VisualJoinSimulator from './components/labs/VisualJoinSimulator';
 import NormalizationWorkbench from './components/labs/NormalizationWorkbench';
+import ErDiagramStudio from './components/labs/ErDiagramStudio';
 import TransactionCrashSimulator from './components/labs/TransactionCrashSimulator';
 import IndexExplorer from './components/labs/IndexExplorer';
 import QueryOptimizerLab from './components/labs/QueryOptimizerLab';
@@ -175,6 +179,21 @@ export default function App() {
     }));
   };
 
+  const handleSignOff = async () => {
+    try {
+      await logoutUser();
+    } catch (err) {
+      console.log('Sign-off error:', err);
+    }
+    setLearnerProfile(prev => ({
+      ...prev,
+      name: "Guest Learner",
+      email: "guest@sarlayash.edu",
+      photoURL: null,
+      isGoogleAuth: false
+    }));
+  };
+
   const handleLevelSelect = (id) => {
     setSelectedLevelId(id);
     setCurrentView('roadmap-detail');
@@ -194,6 +213,8 @@ export default function App() {
         return <VisualJoinSimulator />;
       case 'normalization-workbench':
         return <NormalizationWorkbench />;
+      case 'er-designer':
+        return <ErDiagramStudio />;
       case 'transaction-simulator':
         return <TransactionCrashSimulator />;
       case 'index-explorer':
@@ -305,6 +326,15 @@ export default function App() {
               SQL Studio
             </button>
             <button
+              onClick={() => setCurrentView('er-studio')}
+              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
+                currentView === 'er-studio' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30 font-bold' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              }`}
+            >
+              <Network className="w-3.5 h-3.5" />
+              ER Studio
+            </button>
+            <button
               onClick={() => setCurrentView('placement')}
               className={`px-3 py-1.5 rounded-lg transition ${
                 currentView === 'placement' ? 'bg-zinc-800 text-amber-400 border border-amber-500/30' : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
@@ -338,7 +368,7 @@ export default function App() {
             </button>
           </nav>
 
-          {/* Right Controls: PWA Offline pill, Install, Profile */}
+          {/* Right Controls: PWA Offline pill, Install, Sign In / Sign Off, Profile */}
           <div className="flex items-center gap-2">
             {/* Offline Status Badge */}
             <div
@@ -383,15 +413,37 @@ export default function App() {
               <Bot className="w-4 h-4" />
             </button>
 
-            {/* Profile / Google Auth */}
+            {/* Sign Off / Log Out Button when Authenticated */}
+            {learnerProfile.isGoogleAuth ? (
+              <button
+                onClick={handleSignOff}
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-zinc-900 hover:bg-red-950/60 text-zinc-300 hover:text-red-300 border border-zinc-800 hover:border-red-900/60 rounded-xl font-mono text-xs transition shadow-sm"
+                title="Sign Off / Log Out"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-400" />
+                <span className="hidden sm:inline font-bold">Sign Off</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-600 hover:from-amber-300 hover:to-yellow-500 text-black font-mono text-xs font-extrabold rounded-xl transition shadow-md shadow-amber-500/20"
+                title="Login / Sign In with Google"
+              >
+                <User className="w-3.5 h-3.5 text-black" />
+                <span>Sign In</span>
+              </button>
+            )}
+
+            {/* Profile trigger */}
             <button
               onClick={() => setIsAuthModalOpen(true)}
               className="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/30 rounded-xl transition"
+              title="Account Settings"
             >
               <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center font-extrabold text-xs text-black">
                 {learnerProfile.name[0]}
               </div>
-              <span className="hidden sm:inline text-xs font-mono font-semibold text-zinc-200">
+              <span className="hidden md:inline text-xs font-mono font-semibold text-zinc-200">
                 {learnerProfile.name.split(' ')[0]}
               </span>
             </button>
@@ -428,6 +480,13 @@ export default function App() {
               SQL Studio (IDE)
             </button>
             <button
+              onClick={() => { setCurrentView('er-studio'); setMobileMenuOpen(false); }}
+              className="w-full text-left p-2 rounded hover:bg-zinc-900 text-amber-300 font-bold flex items-center gap-2"
+            >
+              <Network className="w-3.5 h-3.5" />
+              Automatic ER Diagram Studio
+            </button>
+            <button
               onClick={() => { setCurrentView('placement'); setMobileMenuOpen(false); }}
               className="w-full text-left p-2 rounded hover:bg-zinc-900 text-zinc-300"
             >
@@ -451,6 +510,23 @@ export default function App() {
             >
               Verify Certificate
             </button>
+            {learnerProfile.isGoogleAuth ? (
+              <button
+                onClick={() => { handleSignOff(); setMobileMenuOpen(false); }}
+                className="w-full text-left p-2 rounded hover:bg-red-950/40 text-red-400 font-bold flex items-center gap-2 border-t border-zinc-800 pt-2.5 mt-2"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Sign Off ({learnerProfile.name})
+              </button>
+            ) : (
+              <button
+                onClick={() => { setIsAuthModalOpen(true); setMobileMenuOpen(false); }}
+                className="w-full text-left p-2 rounded bg-amber-400 text-black font-extrabold flex items-center gap-2 border-t border-zinc-800 pt-2.5 mt-2"
+              >
+                <User className="w-3.5 h-3.5 text-black" />
+                Sign In with Google
+              </button>
+            )}
             <button
               onClick={() => { setCurrentView('admin'); setMobileMenuOpen(false); }}
               className="w-full text-left p-2 rounded hover:bg-zinc-900 text-amber-300"
@@ -649,6 +725,11 @@ export default function App() {
               onXpEarned={handleAddXp}
             />
           </div>
+        )}
+
+        {/* VIEW: AUTOMATIC ER DIAGRAM STUDIO */}
+        {currentView === 'er-studio' && (
+          <ErDiagramStudio />
         )}
 
         {/* VIEW 5: PLACEMENT ENGINE */}

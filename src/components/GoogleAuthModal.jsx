@@ -196,17 +196,21 @@ export default function GoogleAuthModal({ isOpen, onClose, currentProfile, onLog
           </form>
 
           {/* Sign Out Option */}
-          {currentProfile?.isGoogleAuth && (
-            <div className="pt-2 border-t border-zinc-800 text-center">
+          <div className="pt-2.5 border-t border-zinc-800 text-center">
+            {currentProfile?.isGoogleAuth ? (
               <button
                 onClick={handleLogout}
-                className="text-zinc-400 hover:text-red-400 text-[11px] inline-flex items-center gap-1 transition"
+                className="w-full py-2 bg-red-950/40 hover:bg-red-950/80 border border-red-900/50 hover:border-red-600 text-red-300 hover:text-red-100 font-bold text-xs rounded-xl inline-flex items-center justify-center gap-2 transition"
               >
-                <LogOut className="w-3 h-3" />
-                Sign Out from Current Session
+                <LogOut className="w-3.5 h-3.5 text-red-400" />
+                <span>Sign Off / Log Out ({currentProfile.name.split(' ')[0]})</span>
               </button>
-            </div>
-          )}
+            ) : (
+              <span className="text-zinc-500 text-[11px]">
+                Currently in Guest Mode • Select an account above to sync progress
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
